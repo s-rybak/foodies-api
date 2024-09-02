@@ -1,0 +1,6 @@
+services:
+  node:
+    image: node:17.9.0
+    container_name: goit.rest.app.node
+    volumes:
+      - ./:/home/app
