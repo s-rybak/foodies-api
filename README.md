@@ -12,4 +12,4 @@
 
 ### Quickstart
 
-## Usage
+### Usage
