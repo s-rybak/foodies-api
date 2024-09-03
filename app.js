@@ -5,6 +5,8 @@ import cors from "cors";
 
 import sequelize from "./db/sequelize.js";
 
+const WEB_SERVER_PORT = Number(process.env.PORT) || 3000;
+
 const app = express();
 
 app.use(morgan("tiny"));
@@ -25,12 +27,15 @@ app.use((err, req, res, next) => {
 });
 
 try {
+  console.log(
+    "Application started. Establishing connection to the database..."
+  );
   await sequelize.authenticate();
   console.log("Database connection successful");
-  app.listen(3000, () => {
-    console.log("Server is running. Use our API on port: 3000");
+  app.listen(WEB_SERVER_PORT, () => {
+    console.log(`Server is running. Use our API on port: ${WEB_SERVER_PORT}`);
   });
 } catch (error) {
-  console.log(error);
+  console.log("Unable to connect to the database:", error.message);
   process.exit(1);
 }
