@@ -4,6 +4,7 @@ import morgan from "morgan";
 import cors from "cors";
 
 import sequelize from "./db/sequelize.js";
+import areasRouter from "./routes/areasRouter.js";
 
 const WEB_SERVER_PORT = Number(process.env.PORT) || 3000;
 
@@ -17,6 +18,7 @@ app.use("/api/status", (_, res) => {
   res.json({ status: "OK" });
 });
 
+app.use("/api/areas", areasRouter);
 app.use((_, res) => {
   res.status(404).json({ message: "Route not found" });
 });
