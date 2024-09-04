@@ -4,6 +4,7 @@ import morgan from "morgan";
 import cors from "cors";
 
 import sequelize from "./db/sequelize.js";
+import categoriesRouter from "./routes/categoriesRouter.js";
 
 const WEB_SERVER_PORT = Number(process.env.PORT) || 3000;
 
@@ -16,6 +17,8 @@ app.use(express.json());
 app.use("/api/status", (_, res) => {
   res.json({ status: "OK" });
 });
+
+app.use ("/api/categories", categoriesRouter)
 
 app.use((_, res) => {
   res.status(404).json({ message: "Route not found" });
