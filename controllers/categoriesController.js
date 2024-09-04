@@ -1,13 +1,9 @@
 import listCategories from '../services/categoriesServices.js';
-import HttpError from '../helpers/HttpError.js';
+import ctrlWrapper from '../helpers/ctrlWrapper.js';
 
 const getAllcategories = async (req, res) => {
-  try {
-    const result = await listCategories();
-    res.json(result);
-  } catch (error) {
-    next(HttpError(500, 'Failed to fetch categories'));
-  }
+  const result = await listCategories();
+  res.json(result);
 };
 
-export default getAllcategories;
+export default ctrlWrapper(getAllcategories);
