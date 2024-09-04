@@ -5,3 +5,4 @@ const listIngredients = (query = {}) => {
 };
 
 export default listIngredients;
+ 
