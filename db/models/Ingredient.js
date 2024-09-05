@@ -27,6 +27,4 @@ const Ingredient = sequelize.define(
 	}
 );
 
-
-
 export default Ingredient;
