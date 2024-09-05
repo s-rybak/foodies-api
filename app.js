@@ -4,6 +4,12 @@ import morgan from "morgan";
 import cors from "cors";
 
 import sequelize from "./db/sequelize.js";
+import authRouter from "./routes/authRouter.js";
+import {
+  avatarAllowedExtensions,
+  defaultPublicFolderName,
+} from "./constants/constants.js";
+import usersRouter from "./routes/usersRouter.js";
 
 const WEB_SERVER_PORT = Number(process.env.PORT) || 3000;
 
@@ -13,9 +19,19 @@ app.use(morgan("tiny"));
 app.use(cors());
 app.use(express.json());
 
+app.use(
+  express.static(defaultPublicFolderName, {
+    extensions: [...avatarAllowedExtensions],
+  })
+);
+
 app.use("/api/status", (_, res) => {
   res.json({ status: "OK" });
 });
+
+app.use("/api/auth", authRouter);
+
+app.use("/api/users", usersRouter);
 
 app.use((_, res) => {
   res.status(404).json({ message: "Route not found" });
