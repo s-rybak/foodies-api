@@ -2,6 +2,11 @@ import { DataTypes } from 'sequelize';
 import sequelize from '../sequelize.js';
 
 const RecipeIngredient = sequelize.define('RecipeIngredient', {
+	id: {
+		type: DataTypes.UUID,  // UUID для промежуточной таблицы
+		defaultValue: DataTypes.UUIDV4,
+		primaryKey: true,
+	},
 	recipeId: {
 		type: DataTypes.UUID,
 		references: {
@@ -27,6 +32,6 @@ const RecipeIngredient = sequelize.define('RecipeIngredient', {
 });
 
 //todo: sync the model
-// RecipeIngredient.sync()
+
 
 export default RecipeIngredient;

@@ -36,6 +36,7 @@ try {
   );
   await sequelize.authenticate();
   console.log("Database connection successful");
+  await sequelize.sync();
   app.listen(WEB_SERVER_PORT, () => {
     console.log(`Server is running. Use our API on port: ${WEB_SERVER_PORT}`);
   });

@@ -1,7 +1,14 @@
 import { DataTypes } from "sequelize";
 import sequelize from "../sequelize.js";
+import Ingredient from "./Ingredient.js";
+import RecipeIngredient from "./RecipeIngredient.js";
 
 const Recipe = sequelize.define('Recipe', {
+	id: {
+		type: DataTypes.INTEGER,  // Используем INTEGER для id
+		autoIncrement: true,  // Автоматическое увеличение значения
+		primaryKey: true,
+	},
 	title: {
 		type: DataTypes.STRING,
 		allowNull: false,
@@ -39,9 +46,8 @@ const Recipe = sequelize.define('Recipe', {
 	timestamps: true,
 });
 
-Recipe.sync();
 
 //todo: Define the relationship between Recipe and Ingredients
-// Recipe.belongsToMany(Ingredient, { through: RecipeIngredient, as: 'ingredients', foreignKey: 'recipeId' });
+Recipe.belongsToMany(Ingredient, { through: RecipeIngredient, as: 'ingredients', foreignKey: 'recipeId' });
 
 export default Recipe;
