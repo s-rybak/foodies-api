@@ -5,7 +5,7 @@ import { emailConfirmationHtml } from "../emails/emailTemplates.js";
 import { jwtTokenExpirationTime } from "../constants/constants.js";
 
 import ctrlWrapper from "../decorators/ctrlWrapper.js";
-import sendEmail from "../services/emailServices.js";
+import emailServices from "../services/emailServices.js";
 import authServices from "../services/usersServices.js";
 import HttpError from "../helpers/HttpError.js";
 
@@ -29,7 +29,7 @@ const registerUser = async (req, res) => {
   });
 
   // Send a verification email to the user's email address for email verification
-  await sendEmail({
+  await emailServices.sendEmail({
     to: email,
     subject: "Confirm Your Email Address",
     html: emailConfirmationHtml(
@@ -75,7 +75,7 @@ const resendEmailVerify = async (req, res, next) => {
   }
 
   // Resend a verification email to the user's email address for email verification
-  await sendEmail({
+  await emailServices.sendEmail({
     to: email,
     subject: "Resent: Confirm Your Email Address",
     html: emailConfirmationHtml(
