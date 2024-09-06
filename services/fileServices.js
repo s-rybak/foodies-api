@@ -3,6 +3,17 @@ import path from "node:path";
 
 import { defaultPublicFolderName } from "../constants/constants.js";
 
+/**
+ * Saves a file to the server's file system.
+ *
+ * @param {Object} file The file object containing file data.
+ * @param {Array<string>} [targetFolderPathArr=[]] The target folder path array where the file should be saved.
+ * @param {string} [filePrefix=""] The prefix to add to the file name.
+ * @param {string} [oldRelPath] The relative path of the old file to be removed.
+ * @param {string} [defaultFileName] The default file name to compare against when deleting the old file.
+ * @returns {<string>} The relative path of the newly saved file.
+ * @throws {Error} Throws an error if file operations fail.
+ */
 export const saveFileToServerFileSystem = async (
   file,
   targetFolderPathArr = [],
