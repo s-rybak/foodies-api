@@ -56,6 +56,10 @@ const User = sequelize.define(
     },
     avatar: {
       type: DataTypes.STRING,
+      defaultValue: null,
+      validate: {
+        notEmpty: true,
+      },
     },
   },
   {
