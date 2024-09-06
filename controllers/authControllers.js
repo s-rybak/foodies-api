@@ -2,7 +2,7 @@ import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 
 import { jwtTokenExpirationTime } from "../constants/constants.js";
-import { emailConfirmationHtml } from "../constants/emailTemplates.js";
+import { emailConfirmationHtml } from "../emails/emailTemplates.js";
 
 import ctrlWrapper from "../helpers/ctrlWrapper.js";
 import sendEmail from "../services/emailServices.js";
@@ -21,7 +21,7 @@ const { JWT_SECRET, BASE_URL } = process.env;
  */
 const registerUser = async (req, res) => {
   // Create user in database
-  const { name, email, verificationToken } = await authServices.createUser({
+  const { id, name, email, verificationToken } = await authServices.createUser({
     name: req.body.name,
     email: req.body.email,
     password: req.body.password,
@@ -40,6 +40,7 @@ const registerUser = async (req, res) => {
 
   // Reply with created user data
   res.status(201).json({
+    id,
     name,
     email,
   });
