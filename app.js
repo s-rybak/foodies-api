@@ -3,6 +3,7 @@ import express from 'express';
 import morgan from 'morgan';
 import cors from 'cors';
 
+import recipesRouter from "./routes/recipesRouter.js";
 import sequelize from "./db/sequelize.js";
 import categoriesRouter from './routes/categoriesRouter.js';
 import ingredientsRouter from './routes/ingredientsRouter.js';
@@ -10,11 +11,15 @@ import areasRouter from "./routes/areasRouter.js";
 
 const WEB_SERVER_PORT = Number(process.env.PORT) || 3000;
 
+
 const app = express();
 
 app.use(morgan('tiny'));
 app.use(cors());
 app.use(express.json());
+
+app.use("/api/recipes", recipesRouter);
+app.use('/api', recipesRouter);
 
 app.use('/api/status', (_, res) => {
   res.json({ status: 'OK' });

@@ -13,3 +13,4 @@ const validateQuery = (schema) => {
 };
 
 export default validateQuery;
+
