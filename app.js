@@ -6,8 +6,8 @@ import cors from "cors";
 import sequelize from "./db/sequelize.js";
 import authRouter from "./routes/authRouter.js";
 import {
-  avatarAllowedExtensions,
   defaultPublicFolderName,
+  imagesAllowedExtensions,
 } from "./constants/constants.js";
 import usersRouter from "./routes/usersRouter.js";
 
@@ -21,7 +21,7 @@ app.use(express.json());
 
 app.use(
   express.static(defaultPublicFolderName, {
-    extensions: [...avatarAllowedExtensions],
+    extensions: [...imagesAllowedExtensions],
   })
 );
 

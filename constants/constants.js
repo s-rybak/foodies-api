@@ -63,8 +63,15 @@ export const defaultPublicFolderName = "public";
 // File storage settings
 export const defaultTempFolderPathArr = ["temp"];
 
-// Avatar settings
-export const defaultRelAvatarFolderPath = ["avatars"]; // inside public folder
-export const avatarAllowedExtensions = ["jpg", "jpeg", "png"];
+// Images settings
+export const imagesAllowedExtensions = ["jpg", "jpeg", "png"];
+
+export const avatarsFolderRelPath = ["avatars"]; // inside public folder
 export const avatarMaxFileSizeKB = 1024;
 export const defaultAvatarFileName = "avatar_default.jpg";
+
+export const recipesFolderRelPath = ["recipes"]; // inside public folder
+export const recipeMaxFileSizeKB = 1024;
+
+export const ingredientsFolderRelPath = ["ingredients"]; // inside public folder
+export const ingredientMaxFileSizeKB = 1024;

@@ -1,10 +1,22 @@
 import uploadFile from "../decorators/uploadFile.js";
 import {
-  avatarAllowedExtensions,
+  imagesAllowedExtensions,
   avatarMaxFileSizeKB,
+  recipeMaxFileSizeKB,
+  ingredientMaxFileSizeKB,
 } from "../constants/constants.js";
 
 export const uploadAvatarImageMiddleware = uploadFile(
-  avatarAllowedExtensions,
+  imagesAllowedExtensions,
   avatarMaxFileSizeKB
+);
+
+export const uploadRecipeThumpMiddleware = uploadFile(
+  imagesAllowedExtensions,
+  recipeMaxFileSizeKB
+);
+
+export const uploadIngredientImageMiddleware = uploadFile(
+  imagesAllowedExtensions,
+  ingredientMaxFileSizeKB
 );

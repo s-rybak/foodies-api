@@ -3,23 +3,11 @@ import path from "node:path";
 
 import {
   defaultAvatarFileName,
-  defaultPublicFolderName,
-  defaultRelAvatarFolderPath,
+  avatarsFolderRelPath,
 } from "../constants/constants.js";
 import ctrlWrapper from "../decorators/ctrlWrapper.js";
 import usersServices from "../services/usersServices.js";
-
-const avatarsFolderAbsPath = path.resolve(
-  defaultPublicFolderName,
-  ...defaultRelAvatarFolderPath
-);
-
-// const saveFileToServerFileSystem = async (
-//   targetFolderPathArr = [],
-//   filePrefix = "",
-//   file,
-//   user
-// ) => {};
+import fileServices from "../services/fileServices.js";
 
 /**
  * Controller to get user information.
@@ -78,63 +66,22 @@ const getCurrentUser = (req, res) => {
  * @throws {Error} Throws an error if there is an issue moving the file or updating the user record.
  */
 const updateAvatar = async (req, res) => {
-  const targetFolderPathArr = defaultRelAvatarFolderPath;
-  const filePrefix = "avatar";
-
-  // Move file from `temp` folder to target folder
-  const { path: oldAbsTempPath, filename } = req.file;
-  const newAbsAvatarPath = path.join(
-    avatarsFolderAbsPath,
-    filePrefix ? filePrefix + "_" + filename : filename
-  );
-  await fs.rename(oldAbsTempPath, newAbsAvatarPath);
-
-  // Obtain old user avatar absolute path for future deletion
-  const oldAvatarAbsPath =
-    req.user.avatar && path.resolve(defaultPublicFolderName, req.user.avatar);
-
-  // Clean-up - remove old user avatar file if not default avatar
-  const defaultAbsAvatarPath = path.resolve(
-    defaultPublicFolderName,
-    ...targetFolderPathArr,
+  // Move file from 'temp' to avatar folder and rename the file
+  const newAvatarRelPath = await fileServices.saveFileToServerFileSystem(
+    req.file,
+    avatarsFolderRelPath,
+    "avatar",
+    req.user.avatar,
     defaultAvatarFileName
   );
-  if (oldAvatarAbsPath && oldAvatarAbsPath !== defaultAbsAvatarPath) {
-    // Attempt to delete the old avatar file.
-    // Full error handling is implemented to ensure that the process continues
-    // even if an error occurs during the file deletion.
-    try {
-      // Check if the old avatar file exists or throw an error
-      await fs.access(oldAvatarAbsPath);
-      // File exists, so attempt to delete it
-      await fs.unlink(oldAvatarAbsPath);
-    } catch (error) {
-      if (error.code === "ENOENT") {
-        // File does not exist
-        console.error("File not found");
-      } else if (error.code === "EACCES") {
-        // Permission denied
-        console.error("Permission denied");
-      } else {
-        // Other errors
-        console.error(`Error deleting file: ${error.message}`);
-      }
-    }
-  }
 
   // Update user with new avatar relative path
-  const newRelPath = path.join(
-    ...targetFolderPathArr,
-    filePrefix ? filePrefix + "_" + filename : filename
-  );
   const { avatar } = await usersServices.updateUser(req.user.id, {
-    avatar: newRelPath,
+    avatar: newAvatarRelPath,
   });
 
   // Sent response with updated avatar URL data
-  res.json({
-    avatar: avatar,
-  });
+  res.json({ avatar });
 };
 
 export default {
