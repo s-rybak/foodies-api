@@ -1,5 +1,6 @@
 import { DataTypes } from "sequelize";
 import sequelize from "../sequelize.js";
+import Recipe from "./Recipe.js";
 
 const Favorite = sequelize.define("favorite", {
   userId: {
@@ -12,6 +13,6 @@ const Favorite = sequelize.define("favorite", {
   },
 });
 
-// Favorite.sync({ force: true });
+  // Favorite.sync({ force: true });
 
 export default Favorite;

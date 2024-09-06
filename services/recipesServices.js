@@ -1,5 +1,6 @@
 import Recipe from "../db/models/Recipe.js";
 import Favorite from "../db/models/Favorite.js";
+import sequelize from '../db/sequelize.js';
 
 export const getRecipeById = async (id) => {
   const recipe = await Recipe.findByPk(id); 
