@@ -1,7 +1,7 @@
 import { Router } from "express";
 
 import authenticateMiddleware from "../middlewares/authenticateMiddleware.js";
-import uploadImageMiddleware from "../middlewares/uploadImageMiddleware.js";
+import { uploadAvatarImageMiddleware } from "../middlewares/uploadImageMiddleware.js";
 import multerErrorHandlingMiddleware from "../middlewares/multerErrorHandlingMiddleware.js";
 import fileUploadValidationMiddleware from "../middlewares/fileUploadValidationMiddleware.js";
 import usersControllers from "../controllers/usersControllers.js";
@@ -23,7 +23,7 @@ usersRouter.get(
 usersRouter.patch(
   "/avatars",
   authenticateMiddleware,
-  uploadImageMiddleware.single("avatar"),
+  uploadAvatarImageMiddleware.single("avatar"),
   multerErrorHandlingMiddleware,
   fileUploadValidationMiddleware,
   usersControllers.updateAvatar
