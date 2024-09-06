@@ -3,6 +3,7 @@ import path from "node:path";
 import { v4 as uuidv4 } from "uuid";
 
 import User from "../db/models/User.js";
+import Follow from "../db/models/Follow.js";
 import {
   defaultAvatarFileName,
   defaultRelAvatarFolderPath,
@@ -92,5 +93,42 @@ async function updateUser(id, data) {
   }
   return updatedUser;
 }
+/**
+ * ======================================
+ * // ветка follow-unfollow
+ * ======================================
+ */
 
-export default { createUser, getUser, updateUser };
+/**
+ * @param {string} currentUserId
+ * @param {string} userId
+ * @returns {Promise<Object>}
+ */
+const followUser = async (currentUserId, userId) => {
+  return await Follow.create({
+    followerId: currentUserId,
+    followingId: userId,
+  });
+};
+
+/**
+ * @param {string} currentUserId
+ * @param {string} userId
+ * @returns {Promise<number>}
+ */
+const unfollowUser = async (currentUserId, userId) => {
+  return await Follow.destroy({
+    where: {
+      followerId: currentUserId,
+      followingId: userId,
+    },
+  });
+};
+
+export default {
+  createUser,
+  getUser,
+  updateUser,
+  followUser, // ветка follow-unfollow
+  unfollowUser, // ветка follow-unfollow
+};

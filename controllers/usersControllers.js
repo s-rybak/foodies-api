@@ -122,7 +122,7 @@ const updateAvatar = async (req, res) => {
     avatar: avatar,
   });
 };
-
+// ветка follow-unfollow
 /**
  * Контроллер для подписки на пользователя
  */
@@ -131,6 +131,7 @@ const followUser = async (req, res, next) => {
     const { userId } = req.params;
     const { id: currentUserId } = req.user;
 
+    await usersServices.followUser(currentUserId, userId);
     res.status(200).json({ message: `User ${userId} followed successfully` });
   } catch (error) {
     next(error);
@@ -145,6 +146,7 @@ const unfollowUser = async (req, res, next) => {
     const { userId } = req.params;
     const { id: currentUserId } = req.user;
 
+    await usersServices.unfollowUser(currentUserId, userId);
     res.status(200).json({ message: `User ${userId} unfollowed successfully` });
   } catch (error) {
     next(error);
@@ -155,6 +157,6 @@ export default {
   getUserInfo: ctrlWrapper(getUserInfo),
   getCurrentUser: ctrlWrapper(getCurrentUser),
   updateAvatar: ctrlWrapper(updateAvatar),
-  followUser, // Подписка
-  unfollowUser, // Отписка
+  followUser, // Подписка // ветка follow-unfollow
+  unfollowUser, // Отписка // ветка follow-unfollow
 };

@@ -4,7 +4,7 @@
   |============================
 */
 import { DataTypes } from "sequelize";
-import sequelize from "../db/sequelize.js";
+import sequelize from "../sequelize.js";
 
 const Follow = sequelize.define("Follow", {
   followerId: {
