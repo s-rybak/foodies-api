@@ -22,10 +22,10 @@ const fileUploadValidationMiddleware = async (req, _, next) => {
   // Check if the file is missing
   if (!req.file) {
     return next(
-      new HttpError(400, {
-        message:
-          "No file uploaded. Please ensure that a file is included in your request.",
-      })
+      HttpError(
+        400,
+        "No file uploaded. Please ensure that a file is included in your request."
+      )
     );
   }
 
@@ -48,9 +48,10 @@ const fileUploadValidationMiddleware = async (req, _, next) => {
     }
 
     return next(
-      new HttpError(400, {
-        message: `Uploaded file '${req.file.originalname}' is empty. Please upload a valid image file.`,
-      })
+      HttpError(
+        400,
+        `Uploaded file '${req.file.originalname}' is empty. Please upload a valid image file.`
+      )
     );
   }
 
