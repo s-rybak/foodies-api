@@ -1,11 +1,12 @@
 import {DataTypes} from "sequelize";
 import sequelize from "../sequelize.js";
+import Favorite from "./Favorite.js";
 
 const Recipe = sequelize.define("recipe", {
   id: {
     type: DataTypes.INTEGER,
     primaryKey: true,
-    autoIncrement: true, // автоматичне збільшення ID
+    autoIncrement: true,
   },
   title: {
     type: DataTypes.STRING,
@@ -55,7 +56,10 @@ const Recipe = sequelize.define("recipe", {
   }
 });
   
-  Recipe.sync({ force: true }); 
+Recipe.hasMany(Favorite, { foreignKey: "recipeId", as: "favorites" });
+Favorite.belongsTo(Recipe, { foreignKey: "recipeId", as: "recipe" });
+
+  // Recipe.sync({ force: true }); 
 
 export default Recipe;
 

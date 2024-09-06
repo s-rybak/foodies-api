@@ -1,23 +1,22 @@
 
-import {Router} from "express";
-import  getAllRecipes  from "../controllers/getAllRecipes.js";
-// import  getRecipeById  from "../controllers/getRecipeById.js";
-// import  getPopularRecipesController  from "../controllers/getPopularRecipes.js";
-import  addRecipe from "../controllers/addRecipe.js";
+import { Router } from "express";
+import {
+  getAllRecipes,
+  addRecipe,
+  getOneRecipe,
+  getPopularRecipesController
+} from "../controllers/recipesController.js";
+import ctrlWrapper from "../helpers/ctrlWrapper.js";
+import validateBody from "../helpers/validateBody.js";
+import { createRecipeSchema } from "../schemas/addRecipeSchema.js";
 
-import validateQuery from "../helpers/validateQuery.js";
 
 const recipesRouter = Router();
 
-recipesRouter.post("/recipes", addRecipe);
-
-recipesRouter.get("/",getAllRecipes );
-
-// recipesRouter.get("/:id", validateQuery, getRecipeById);
-
-// recipesRouter.get("/popular", getPopularRecipesController); 
-
-
+recipesRouter.post("/recipes", validateBody(createRecipeSchema), ctrlWrapper(addRecipe));
+recipesRouter.get("/", ctrlWrapper(getAllRecipes));
+recipesRouter.get("/:id", ctrlWrapper(getOneRecipe));
+recipesRouter.get("/popular", ctrlWrapper(getPopularRecipesController));
 
 export default recipesRouter;
 
