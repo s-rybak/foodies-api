@@ -61,8 +61,47 @@ const deleteRecipe = async (req, res) => {
 	}
 };
 
+const addRecipeToFavorites = async (req, res) => {
+	const userId = req.user.id; // Предполагаем, что ID пользователя берется из токена
+	const { recipeId } = req.body;
+
+	try {
+		const result = await r.addRecipeToFavorites(userId, recipeId);
+		res.status(result.status).json({ message: result.message });
+	} catch (error) {
+		res.status(500).json({ error: 'Failed to add recipe to favorites' });
+	}
+};
+
+const removeRecipeFromFavorites = async (req, res) => {
+	const userId = req.user.id;
+	const { recipeId } = req.params;
+
+	try {
+		const result = await r.removeRecipeFromFavorites(userId, recipeId);
+		res.status(result.status).json({ message: result.message });
+	} catch (error) {
+		res.status(500).json({ error: 'Failed to remove recipe from favorites' });
+	}
+};
+
+const getFavoriteRecipes = async (req, res) => {
+	const userId = req.user.id;
+
+	try {
+		const favoriteRecipes = await r.getFavoriteRecipes(userId);
+		res.status(200).json(favoriteRecipes);
+	} catch (error) {
+		res.status(500).json({ error: 'Failed to retrieve favorite recipes' });
+	}
+};
+
+
 export default {
 	getAllRecipes: ctrlWrapper(getAllRecipes),
 	createRecipe: ctrlWrapper(createRecipe),
 	deleteRecipe: ctrlWrapper(deleteRecipe),
+	addRecipeToFavorites: ctrlWrapper(addRecipeToFavorites),
+	removeRecipeFromFavorites: ctrlWrapper(removeRecipeFromFavorites),
+	getFavoriteRecipes: ctrlWrapper(getFavoriteRecipes),
 };

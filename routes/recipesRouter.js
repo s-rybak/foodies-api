@@ -12,6 +12,9 @@ const recipesRouter = Router();
 recipesRouter.post('/', createRecipeMiddleware, recipesController.createRecipe);
 recipesRouter.delete('/:id', recipesController.deleteRecipe);
 recipesRouter.get('/', recipesController.getAllRecipes);
+recipesRouter.post('/favorites',  recipesController.addRecipeToFavorites);
+recipesRouter.delete('/favorites/:recipeId',  recipesController.removeRecipeFromFavorites);
+recipesRouter.get('/favorites',  recipesController.getFavoriteRecipes);
 
 
 export default recipesRouter;

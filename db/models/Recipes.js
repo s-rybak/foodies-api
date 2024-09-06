@@ -49,5 +49,10 @@ const Recipe = sequelize.define('Recipe', {
 
 //todo: Define the relationship between Recipe and Ingredients
 Recipe.belongsToMany(Ingredient, { through: RecipeIngredient, as: 'ingredients', foreignKey: 'recipeId' });
+// Recipe.belongsToMany(User, {
+// 	through: FavoriteRecipe,
+// 	foreignKey: 'recipeId',
+// 	as: 'usersWhoFavorited' // псевдоним для отношения
+// });
 
 export default Recipe;
