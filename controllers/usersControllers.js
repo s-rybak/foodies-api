@@ -6,7 +6,7 @@ import {
   defaultPublicFolderName,
   defaultRelAvatarFolderPath,
 } from "../constants/constants.js";
-import ctrlWrapper from "../helpers/ctrlWrapper.js";
+import ctrlWrapper from "../decorators/ctrlWrapper.js";
 import usersServices from "../services/usersServices.js";
 
 const avatarsFolderAbsPath = path.resolve(

@@ -4,7 +4,7 @@ import jwt from "jsonwebtoken";
 import { emailConfirmationHtml } from "../emails/emailTemplates.js";
 import { jwtTokenExpirationTime } from "../constants/constants.js";
 
-import ctrlWrapper from "../helpers/ctrlWrapper.js";
+import ctrlWrapper from "../decorators/ctrlWrapper.js";
 import sendEmail from "../services/emailServices.js";
 import authServices from "../services/usersServices.js";
 import HttpError from "../helpers/HttpError.js";
@@ -169,7 +169,6 @@ const loginUser = async (req, res, next) => {
 
   // Update the user record with the new token
   user = await authServices.updateUser(user.id, { token });
-  console.log("user :>> ", user);
 
   // Return response object containing token and user data
   res.json({

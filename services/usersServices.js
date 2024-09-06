@@ -21,7 +21,6 @@ async function createUser(data) {
       verificationToken,
     });
 
-    console.log("reply :>> ", reply);
     return reply?.dataValues;
   } catch (error) {
     if (error.name === "SequelizeUniqueConstraintError") {
