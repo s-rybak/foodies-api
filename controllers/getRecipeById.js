@@ -23,3 +23,18 @@
 
 // export default ctrlWrapper(getRecipeById);
 
+import { getRecipeById } from '../services/recipesService.js';
+import HttpError from '../helpers/HttpError.js';
+
+export const getOneRecipe = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    const recipe = await getRecipeById(id);
+    if (!recipe) {
+      throw HttpError(404, `Recipe with id=${id} not found`);
+    }
+    res.status(200).json(recipe);
+  } catch (error) {
+    next(error);
+  }
+};

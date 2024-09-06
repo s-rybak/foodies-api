@@ -1,15 +1,10 @@
 import Recipe from "../db/models/Recipe.js";
 // import Favorite from "../db/models/Favorite.js";
 
-
-// export const getRecipesById = async (id) => {
-//   const recipe = await Recipe.findByPk(id); 
-//   if (!recipe) {
-//     throw new Error(`Recipe with id ${id} not found`);
-//   }
-//   return recipe;
-// };
-
+export async function getRecipeById(recipeId) {
+  const recipe = await Recipe.findByPk(recipeId); 
+  return recipe || null;
+}
 
 // export const getPopularRecipes = async () => {
 //   try {
