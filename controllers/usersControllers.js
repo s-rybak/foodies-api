@@ -14,6 +14,13 @@ const avatarsFolderAbsPath = path.resolve(
   ...defaultRelAvatarFolderPath
 );
 
+// const saveFileToServerFileSystem = async (
+//   targetFolderPathArr = [],
+//   filePrefix = "",
+//   file,
+//   user
+// ) => {};
+
 /**
  * Controller to get user information.
  * It retrieves the user's information and includes followers and following details
@@ -23,7 +30,7 @@ const avatarsFolderAbsPath = path.resolve(
  * @param {Object} res Express response object.
  * @param {Function} next Express next middleware function.
  */
-const getUserInfo = (req, res, next) => {
+const getUserInfo = (req, res) => {
   const { id, name, email, avatar, followers = [], following = [] } = req.user;
 
   const user = {
@@ -71,30 +78,28 @@ const getCurrentUser = (req, res) => {
  * @throws {Error} Throws an error if there is an issue moving the file or updating the user record.
  */
 const updateAvatar = async (req, res) => {
-  // Move avatar file from `temp` folder to `avatars` folder
+  const targetFolderPathArr = defaultRelAvatarFolderPath;
+  const filePrefix = "avatar";
+
+  // Move file from `temp` folder to target folder
   const { path: oldAbsTempPath, filename } = req.file;
-  const newAbsAvatarPath = path.join(avatarsFolderAbsPath, filename);
+  const newAbsAvatarPath = path.join(
+    avatarsFolderAbsPath,
+    filePrefix ? filePrefix + "_" + filename : filename
+  );
   await fs.rename(oldAbsTempPath, newAbsAvatarPath);
 
   // Obtain old user avatar absolute path for future deletion
-  const oldAvatarAbsPath = path.resolve(
-    defaultPublicFolderName,
-    req.user.avatar
-  );
-
-  // Update user with new avatar relative path
-  const newRelPath = path.join(...defaultRelAvatarFolderPath, filename);
-  const { avatar } = await usersServices.updateUser(req.user.id, {
-    avatar: newRelPath,
-  });
+  const oldAvatarAbsPath =
+    req.user.avatar && path.resolve(defaultPublicFolderName, req.user.avatar);
 
   // Clean-up - remove old user avatar file if not default avatar
   const defaultAbsAvatarPath = path.resolve(
     defaultPublicFolderName,
-    ...defaultRelAvatarFolderPath,
+    ...targetFolderPathArr,
     defaultAvatarFileName
   );
-  if (oldAvatarAbsPath !== defaultAbsAvatarPath) {
+  if (oldAvatarAbsPath && oldAvatarAbsPath !== defaultAbsAvatarPath) {
     // Attempt to delete the old avatar file.
     // Full error handling is implemented to ensure that the process continues
     // even if an error occurs during the file deletion.
@@ -116,6 +121,15 @@ const updateAvatar = async (req, res) => {
       }
     }
   }
+
+  // Update user with new avatar relative path
+  const newRelPath = path.join(
+    ...targetFolderPathArr,
+    filePrefix ? filePrefix + "_" + filename : filename
+  );
+  const { avatar } = await usersServices.updateUser(req.user.id, {
+    avatar: newRelPath,
+  });
 
   // Sent response with updated avatar URL data
   res.json({
