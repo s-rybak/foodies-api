@@ -1,37 +1,27 @@
 
 import HttpError from '../helpers/HttpError.js';
-import { createRecipeSchema } from '../schemas/addRecipeSchema.js';
-import { 
+import {
   createRecipe,
   listRecipes,
   getRecipeById,
   getPopularRecipes,
  } from "../services/recipesServices.js";
+import ctrlWrapper from "../helpers/ctrlWrapper.js";
 
 
- export const addRecipe = async (req, res) => {
-  try {
+ export const addRecipe = ctrlWrapper(async (req, res) => {
+   const newRecipe = await createRecipe({
+     ...req.body,
+     owner: req.user.id,
+   });
 
-    const { error } = createRecipeSchema.validate(req.body);
-    if (error) {
-      return res.status(400).json({ details: error.details });
-    }
+   res.status(201).json(newRecipe);
+ });
 
-    const newRecipe = await createRecipe(req.body);
-
-    res.status(201).json(newRecipe);
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({
-      error: error.message,
-    });
-  }
-};
-
-export const getAllRecipes = async (req, res, next) => {
+export const getAllRecipes = ctrlWrapper(async (req, res, next) => {
   try {
     console.log("in controller");
-
+    //TODO add shcema validation in middleware
     const { category, ingredient, region, page = 1, limit = 10 } = req.query || {};
 
     const pageInt = parseInt(page);
@@ -40,7 +30,7 @@ export const getAllRecipes = async (req, res, next) => {
     if (isNaN(pageInt) || isNaN(limitInt) || pageInt <= 0 || limitInt <= 0) {
       return next(HttpError(400, "Invalid pagination parameters."));
     }
-
+    //TODO implement filter in service or remove this functionality
     const { count, rows } = await listRecipes({ category, ingredient, region, page: pageInt, limit: limitInt });
 
     if (count === 0) {
@@ -54,9 +44,9 @@ export const getAllRecipes = async (req, res, next) => {
     }
     next(error);
   }
-};
+});
 
-export const getPopularRecipesController = async (req, res, next) => {
+export const getPopularRecipesController = ctrlWrapper(async (req, res, next) => {
   try {
     const recipes = await getPopularRecipes();
 
@@ -68,9 +58,9 @@ export const getPopularRecipesController = async (req, res, next) => {
   } catch (error) {
     next(HttpError(500, error.message));
   }
-};
+});
 
-export const getOneRecipe = async (req, res, next) => {
+export const getOneRecipe = ctrlWrapper(async (req, res, next) => {
   try {
     const { id } = req.params;
     const recipe = await getRecipeById(id);
@@ -81,4 +71,4 @@ export const getOneRecipe = async (req, res, next) => {
   } catch (error) {
     next(error);
   }
-};
+});

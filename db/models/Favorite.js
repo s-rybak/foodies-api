@@ -2,7 +2,7 @@ import { DataTypes } from "sequelize";
 import sequelize from "../sequelize.js";
 import Recipe from "./Recipe.js";
 
-const Favorite = sequelize.define("favorite", {
+const Favorite = sequelize.define("Favorite", {
   userId: {
     type: DataTypes.INTEGER,
     allowNull: false,

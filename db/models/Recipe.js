@@ -2,7 +2,7 @@ import {DataTypes} from "sequelize";
 import sequelize from "../sequelize.js";
 import Favorite from "./Favorite.js";
 
-const Recipe = sequelize.define("recipe", {
+const Recipe = sequelize.define("Recipe", {
   id: {
     type: DataTypes.INTEGER,
     primaryKey: true,
@@ -59,7 +59,7 @@ const Recipe = sequelize.define("recipe", {
 Recipe.hasMany(Favorite, { foreignKey: "recipeId", as: "favorites" });
 Favorite.belongsTo(Recipe, { foreignKey: "recipeId", as: "recipe" });
 
-  // Recipe.sync({ force: true }); 
+//Recipe.sync({ force: true });
 
 export default Recipe;
 

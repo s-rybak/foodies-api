@@ -19,7 +19,6 @@ app.use(cors());
 app.use(express.json());
 
 app.use("/api/recipes", recipesRouter);
-app.use('/api', recipesRouter);
 
 app.use('/api/status', (_, res) => {
   res.json({ status: 'OK' });

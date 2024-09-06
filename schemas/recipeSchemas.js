@@ -40,3 +40,6 @@ export const createRecipeSchema = Joi.object({
     .required()
     .messages({ "any.required": "Owner is required" }),
 });
+
+
+//TODO implement getAllRecipes schema

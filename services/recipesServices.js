@@ -50,6 +50,7 @@ export const createRecipe = async (recipeData) => {
 };
 
 export const listRecipes = async () => {
+  //TODO implement filter by passed in controller parameters
   try {
     const recipes = await Recipe.findAll(); 
     return recipes;
