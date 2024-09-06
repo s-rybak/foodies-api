@@ -60,8 +60,11 @@ export const jwtTokenExpirationTime = "23h";
 // Serves files like images, CSS files, and JavaScript files
 export const defaultPublicFolderName = "public";
 
+// File storage settings
+export const defaultTempFolderPathArr = ["temp"];
+
 // Avatar settings
-export const defaultRelAvatarFolderPath = ["avatars"];
-export const defaultAvatarFileName = "avatar_default.jpg";
-export const avatarMaxFileSizeKB = 1024;
+export const defaultRelAvatarFolderPath = ["avatars"]; // inside public folder
 export const avatarAllowedExtensions = ["jpg", "jpeg", "png"];
+export const avatarMaxFileSizeKB = 1024;
+export const defaultAvatarFileName = "avatar_default.jpg";
