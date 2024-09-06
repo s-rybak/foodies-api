@@ -1,10 +1,12 @@
 import nodemailer from "nodemailer";
+import path from "node:path";
+import { defaultPublicFolderName } from "../constants/constants.js";
 
 const {
   MAILER_HOST,
   MAILER_PORT,
   MAILER_FROM_EMAIL,
-  UKR_NET_FROM_NAME,
+  MAILER_FROM_NAME,
   MAILER_PASSWORD,
 } = process.env;
 
@@ -22,14 +24,24 @@ const nodemailerConfig = {
 };
 
 const from = {
-  name: UKR_NET_FROM_NAME,
-  address: UKR_NET_FROM_EMAIL,
+  name: MAILER_FROM_NAME,
+  address: MAILER_FROM_EMAIL,
 };
 
 const transporter = nodemailer.createTransport(nodemailerConfig);
 
 const sendEmail = data => {
-  const emailOptions = { ...data, from };
+  const emailOptions = {
+    ...data,
+    from,
+    attachments: [
+      {
+        filename: "logo.png",
+        path: path.resolve(defaultPublicFolderName, "logo.png"),
+        cid: "logo@foodies-api", //my mistake was putting "cid:logo@cid" here!
+      },
+    ],
+  };
   return transporter.sendMail(emailOptions);
 };
 

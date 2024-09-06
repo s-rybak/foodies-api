@@ -122,11 +122,6 @@ const updateAvatar = async (req, res) => {
     avatar: avatar,
   });
 };
-/**
-  |============================
-  | ветка follow-unfollow
-  |============================
-*/
 
 /**
  * Контроллер для подписки на пользователя
@@ -160,11 +155,6 @@ export default {
   getUserInfo: ctrlWrapper(getUserInfo),
   getCurrentUser: ctrlWrapper(getCurrentUser),
   updateAvatar: ctrlWrapper(updateAvatar),
-  followUser, // Подписка // ветка follow-unfollow
-  unfollowUser, // Отписка // ветка follow-unfollow
+  followUser, // Подписка
+  unfollowUser, // Отписка
 };
-/**
-  |============================
-  | ветка follow-unfollow
-  |============================
-*/
