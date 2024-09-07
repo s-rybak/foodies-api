@@ -35,8 +35,10 @@ app.use(
 app.use("/api/status", (_, res) => {
   res.json({ status: "OK" });
 });
+
 app.use("/api/auth", authRouter);
 app.use("/api/users", usersRouter);
+
 app.use("/api/categories", categoriesRouter);
 app.use("/api/ingredients", ingredientsRouter);
 app.use("/api/areas", areasRouter);

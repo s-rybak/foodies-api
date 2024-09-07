@@ -1,8 +1,8 @@
-import { DataTypes } from 'sequelize';
-import sequelize from '../sequelize.js';
+import { DataTypes } from "sequelize";
+import sequelize from "../sequelize.js";
 
 const Category = sequelize.define(
-  'category',
+  "category",
   {
     id: {
       type: DataTypes.UUID,
@@ -19,6 +19,7 @@ const Category = sequelize.define(
     timestamps: false,
   }
 );
+
 // Category.sync({ force: true });
 
 export default Category;

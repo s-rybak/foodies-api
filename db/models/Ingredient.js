@@ -3,7 +3,7 @@ import sequelize from '../sequelize.js';
 import Recipe from "./Recipe.js";
 
 const Ingredient = sequelize.define(
-  'ingredient',
+  "ingredient",
   {
     id: {
       type: DataTypes.UUID,
