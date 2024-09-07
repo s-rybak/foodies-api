@@ -1,59 +1,97 @@
 import Recipe from "../db/models/Recipe.js";
-import Favorite from "../db/models/Favorite.js";
-import sequelize from '../db/sequelize.js';
+import Category from "../db/models/Category.js";
+import Area from "../db/models/Area.js";
+import Ingredient from "../db/models/Ingredient.js";
+import User from "../db/models/User.js";
+import sequelize from "../db/sequelize.js";
+import UserFavorite from "../db/models/UserFavorite.js";
+import RecipeIngredient from "../db/models/RecipeIngredient.js";
+
+export const listRecipes = async ({ ownerId, limit, offset }) => {
+  return Recipe.findAll({
+    where: { ownerId },
+    include: [
+      { model: Ingredient, through: { attributes: [] } },
+      { model: Category },
+      { model: Area },
+      { model: User, attributes: ['id', 'name', 'avatar'] }
+    ],
+    limit,
+    offset
+  });
+};
 
 export const getRecipeById = async (id) => {
-  const recipe = await Recipe.findByPk(id);
-  if (!recipe) {
-    throw new Error(`Recipe with id ${id} not found`);
-  }
-  return recipe;
+  return Recipe.findOne({
+    where: { id },
+    include: [
+      { model: Ingredient, through: { attributes: [] } },
+      { model: Category },
+      { model: Area },
+      { model: User, attributes: ['id', 'name', 'avatar'] }
+    ]
+  });
 };
 
-export const getPopularRecipes = async () => {
+export const createRecipes = async ({ ingredients, ...recipeBody }) => {
+  const transaction = await sequelize.transaction();
   try {
-    const recipes = await Recipe.findAll({
-      attributes: {
-        include: [
-          [
-            sequelize.fn("COUNT", sequelize.col("Favorites.recipeId")),
-            "favoritesCount"
-          ]
-        ]
-      },
-      include: [
-        {
-          model: Favorite,
-          attributes: []
-        }
-      ],
-      group: ["Recipe.id"],
-      order: [[sequelize.literal("favoritesCount"), "DESC"]]
+    const recipe = await Recipe.create(recipeBody, { transaction });
+
+    const ingredientsStored = await Ingredient.findAll({
+      where: { id: ingredients }
     });
 
-    return recipes;
-  } catch (error) {
-    throw new Error("Failed to retrieve popular recipes: " + error.message);
+    await Promise.all(
+      ingredientsStored.map(ingredient => recipe.addIngredient(ingredient, { transaction }))
+    );
+
+    await transaction.commit();
+    return getRecipeById(recipe.id);
+  } catch (e) {
+    await transaction.rollback();
+    throw e;
   }
 };
 
-export const createRecipe = async (recipeData) => {
-  try {
-
-    const newRecipe = await Recipe.create(recipeData);
-
-    return newRecipe;
-  } catch (error) {
-
-    throw new Error('Error creating recipe: ' + error.message);
-  }
+export const getFavoriteRecipesByUserId = async (userId) => {
+  return UserFavorite.findAll({
+    where: { ownerId: userId },
+    include: [
+      {
+        model: Recipe,
+        include: [
+          { model: Ingredient, through: { attributes: [] } },
+          { model: Category },
+          { model: Area }
+        ]
+      }
+    ]
+  });
 };
 
-export const listRecipes = async () => {
-  try {
-    const recipes = await Recipe.findAll();
-    return recipes;
-  } catch (error) {
-    throw new Error('Error retrieving recipes: ' + error.message);
-  }
+export const addRecipeToFavorites = async (userId, recipeId) => {
+  return UserFavorite.create({
+    ownerId: userId,
+    recipeId
+  });
 };
+
+export const removeRecipeFromFavorites = async (userId, recipeId) => {
+  return UserFavorite.destroy({
+    where: { ownerId: userId, recipeId }
+  });
+};
+
+export const removeRecipe = async (id) => {
+  await RecipeIngredient.destroy({
+    where: { recipeId: id }
+  });
+  await UserFavorite.destroy({
+    where: { recipeId: id }
+  });
+  return Recipe.destroy({
+    where: { id }
+  });
+};
+

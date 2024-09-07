@@ -31,7 +31,6 @@ app.use(
   })
 );
 
-app.use("/api/recipes", recipesRouter);
 
 app.use("/api/status", (_, res) => {
   res.json({ status: "OK" });
@@ -41,6 +40,7 @@ app.use("/api/users", usersRouter);
 app.use("/api/categories", categoriesRouter);
 app.use("/api/ingredients", ingredientsRouter);
 app.use("/api/areas", areasRouter);
+app.use("/api/recipes", recipesRouter);
 
 app.use((_, res) => {
   res.status(404).json({ message: "Route not found" });
@@ -56,6 +56,7 @@ try {
     "Application started. Establishing connection to the database..."
   );
   await sequelize.authenticate();
+  // await sequelize.sync()
   console.log("Database connection successful");
   app.listen(WEB_SERVER_PORT, () => {
     console.log(`Server is running. Use our API on port: ${WEB_SERVER_PORT}`);

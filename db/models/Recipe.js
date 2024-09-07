@@ -1,64 +1,70 @@
 import {DataTypes} from "sequelize";
 import sequelize from "../sequelize.js";
-import Favorite from "./Favorite.js";
+import Category from "./Category.js";
+import Ingredient from "./Ingredient.js";
+import User from "./User.js";
+import Area from "./Area.js";
 
 const Recipe = sequelize.define("recipe", {
   id: {
-    type: DataTypes.INTEGER,
-    primaryKey: true,
-    autoIncrement: true,
+    type: DataTypes.UUID,
+    defaultValue: DataTypes.UUIDV4,
+    allowNull: false,
+    primaryKey: true
   },
   title: {
     type: DataTypes.STRING,
-    allowNull: false,
-  },
-  category: {
-    type: DataTypes.STRING,
-    allowNull: false,
-  },
-  area: {
-    type: DataTypes.STRING,
-    allowNull: false,
+    allowNull: false
   },
   instructions: {
     type: DataTypes.TEXT,
-    allowNull: false,
+    allowNull: false
   },
   description: {
     type: DataTypes.TEXT,
-    allowNull: true,
+    allowNull: false
   },
   thumb: {
     type: DataTypes.STRING,
-    allowNull: true,
+    allowNull: false
   },
   time: {
     type: DataTypes.STRING,
-    allowNull: false,
+    allowNull: false
   },
-  ingredients: {
-    type: DataTypes.STRING,
-    allowNull: false,
+  categoryId: {
+    type: DataTypes.UUID,
+    allowNull: false
   },
-  owner: {
-    type: DataTypes.INTEGER,
-    allowNull: false,
+  areaId: {
+    type: DataTypes.UUID,
+    allowNull: false
   },
-  createdAt: {
-    type: DataTypes.DATE,
-    allowNull: false,
-    defaultValue: DataTypes.NOW,
-  },
-  updatedAt: {
-    type: DataTypes.DATE,
-    allowNull: false,
-    defaultValue: DataTypes.NOW,
+  ownerId: {
+    type: DataTypes.UUID,
+    allowNull: false
   }
 });
 
-Recipe.hasMany(Favorite, { foreignKey: "recipeId", as: "favorites" });
-Favorite.belongsTo(Recipe, { foreignKey: "recipeId", as: "recipe" });
+Recipe.belongsTo(Area, {
+  foreignKey: 'areaId'
+});
 
-// Recipe.sync({ force: true });
+Recipe.belongsTo(User, {
+  foreignKey: 'ownerId'
+});
+
+Recipe.belongsTo(Category, {
+  foreignKey: 'categoryId'
+});
+
+Recipe.belongsToMany(Ingredient, { through: 'recipe_ingredient' });
+
+Ingredient.belongsToMany(Recipe, { through: 'recipe_ingredient' });
+
+Category.hasMany(Recipe, {
+  foreignKey: 'id'
+});
+
 
 export default Recipe;
