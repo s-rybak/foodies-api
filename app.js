@@ -31,7 +31,6 @@ app.use(
 );
 
 app.use("/api/recipes", recipesRouter);
-app.use("/api", recipesRouter);
 
 app.use("/api/status", (_, res) => {
   res.json({ status: "OK" });
