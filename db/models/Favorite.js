@@ -1,18 +1,36 @@
-import { DataTypes } from "sequelize";
+import {DataTypes} from "sequelize";
 import sequelize from "../sequelize.js";
-import Recipe from "./Recipe.js";
+import {emailRegex} from "../../constants/constants.js";
 
-const Favorite = sequelize.define("favorite", {
-  userId: {
-    type: DataTypes.INTEGER,
+const User = sequelize.define("users", {
+  password: {
+    type: DataTypes.STRING,
     allowNull: false,
   },
-  recipeId: {
-    type: DataTypes.INTEGER,
+  email: {
+    type: DataTypes.STRING,
     allowNull: false,
+    unique: true,
+    validate: {
+      is: emailRegex,
+    },
+  },
+  token: {
+    type: DataTypes.STRING,
+    defaultValue: null,
+  },
+  avatarURL: {
+    type: DataTypes.STRING,
+  },
+  verify: {
+    type: DataTypes.BOOLEAN,
+    defaultValue: false,
+  },
+  verificationToken: {
+    type: DataTypes.STRING,
   },
 });
 
-  // Favorite.sync({ force: true });
+User.sync({ force: true });
 
-export default Favorite;
+export default User;

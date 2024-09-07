@@ -1,36 +1,42 @@
-import Joi from "joi";
+import Joi from 'joi';
 
 export const createRecipeSchema = Joi.object({
-	title: Joi.string().min(3).max(100).required().messages({
-		'string.empty': 'Title is required.',
-		'string.min': 'Title must be at least 3 characters long.',
-		'string.max': 'Title cannot exceed 100 characters.',
-	}),
-	category: Joi.string().required().messages({
-		'string.empty': 'Category is required.',
-	}),
-	area: Joi.string().required().messages({
-		'string.empty': 'Area is required.',
-	}),
-	instructions: Joi.string().min(10).required().messages({
-		'string.empty': 'Instructions are required.',
-		'string.min': 'Instructions must be at least 10 characters long.',
-	}),
-	description: Joi.string().optional(),
-	thumb: Joi.string().uri().optional().messages({
-		'string.uri': 'Thumbnail must be a valid URL.',
-	}),
-	time: Joi.string().optional(),
-	ingredients: Joi.array()
-		.items(Joi.object({
-			id: Joi.string().required(),
-			measure: Joi.string().required(),
-		}))
-		.min(1)
+	title: Joi.string()
 		.required()
-		.messages({
-			'array.min': 'At least one ingredient is required.',
-		}),
-});
+		.messages({ "any.required": "Title is required" }),
 
-export default { createRecipeSchema };
+	category: Joi.string()
+		.required()
+		.messages({ "any.required": "Category is required" }),
+
+	area: Joi.string()
+		.required()
+		.messages({ "any.required": "Area is required" }),
+
+	instructions: Joi.string()
+		.required()
+		.messages({ "any.required": "Instructions are required" }),
+
+	description: Joi.string()
+		.optional()
+		.allow('')
+		.messages({ "string.empty": "Description can be empty" }),
+
+	thumb: Joi.string()
+		.optional()
+		.allow('')
+		.messages({ "string.empty": "Thumb can be empty" }),
+
+	time: Joi.string()
+		.required()
+		.messages({ "any.required": "Time is required" }),
+
+	ingredients: Joi.string()
+		.required()
+		.messages({ "any.required": "Ingredients are required" }),
+
+	owner: Joi.number()
+		.integer()
+		.required()
+		.messages({ "any.required": "Owner is required" }),
+});

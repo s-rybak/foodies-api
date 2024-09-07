@@ -55,12 +55,10 @@ const Recipe = sequelize.define("recipe", {
     defaultValue: DataTypes.NOW,
   }
 });
-  
+
 Recipe.hasMany(Favorite, { foreignKey: "recipeId", as: "favorites" });
 Favorite.belongsTo(Recipe, { foreignKey: "recipeId", as: "recipe" });
 
-  // Recipe.sync({ force: true }); 
+// Recipe.sync({ force: true });
 
 export default Recipe;
-
-

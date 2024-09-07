@@ -2,7 +2,8 @@ import {DataTypes} from "sequelize";
 import sequelize from "../sequelize.js";
 import {emailRegex} from "../../constants/constants.js";
 import FavoriteRecipe from "./FavoriteRecipe.js";
-import Recipe from "./Recipes.js";
+import Recipe from "./Recipe.js";
+
 
 const User = sequelize.define("users", {
     password: {
@@ -33,11 +34,10 @@ const User = sequelize.define("users", {
     },
 });
 
-//User.sync({ force: true });
-// User.belongsToMany(Recipe, {
-//     through: FavoriteRecipe,
-//     foreignKey: 'userId',
-//     as: 'favoriteRecipes' // псевдоним для отношения
-// });
+User.belongsToMany(Recipe, {
+    through: FavoriteRecipe,
+    foreignKey: 'userId',
+    as: 'favoriteRecipes' // псевдоним для отношения
+});
 
 export default User;
