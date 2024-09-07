@@ -2,7 +2,7 @@ import { DataTypes } from "sequelize";
 import sequelize from "../sequelize.js";
 
 const Area = sequelize.define(
-  "Area",
+  "area",
   {
     name: {
       type: DataTypes.STRING,

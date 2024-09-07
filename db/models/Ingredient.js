@@ -2,7 +2,7 @@ import { DataTypes } from 'sequelize';
 import sequelize from '../sequelize.js';
 
 const Ingredient = sequelize.define(
-  'Ingredient',
+  'ingredient',
   {
     name: {
       type: DataTypes.STRING,
