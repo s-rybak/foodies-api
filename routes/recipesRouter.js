@@ -1,25 +1,30 @@
-import { Router } from "express";
 
+import { Router } from "express";
 import {
-  getAllRecipes,
-  addRecipe,
-  getOneRecipe,
-  getPopularRecipesController,
+  getById,
+  createRecipe,
+  addToFavorites,
+  removeFromFavorites,
+  deleteRecipe, getUserRecipes, getUserFavoriteRecipes,
 } from "../controllers/recipesController.js";
-import ctrlWrapper from "../decorators/ctrlWrapper.js";
 import validateBody from "../decorators/validateBody.js";
-import { createRecipeSchema } from "../schemas/addRecipeSchema.js";
+import { createRecipeSchema } from "../schemas/recipeSchema.js";
+import authMiddleware from "../middlewares/authenticateMiddleware.js"
+
 
 const recipesRouter = Router();
 
-recipesRouter.get("/", ctrlWrapper(getAllRecipes));
-recipesRouter.get("/popular", ctrlWrapper(getPopularRecipesController));
-recipesRouter.get("/:id", ctrlWrapper(getOneRecipe));
+recipesRouter.post('/', authMiddleware, validateBody(createRecipeSchema), createRecipe);
+recipesRouter.delete('/:id/favorites', authMiddleware, removeFromFavorites);
+recipesRouter.get('/favorites', authMiddleware, getUserFavoriteRecipes);
+recipesRouter.delete('/:id', authMiddleware, deleteRecipe);
+recipesRouter.get('/my-recipes', authMiddleware, getUserRecipes);
+recipesRouter.get('/:id', getById);
+recipesRouter.post('/:id/favorites', authMiddleware, addToFavorites);
 
-recipesRouter.post(
-  "/",
-  validateBody(createRecipeSchema),
-  ctrlWrapper(addRecipe)
-);
 
 export default recipesRouter;
+
+
+
+

@@ -1,9 +1,16 @@
-import { DataTypes } from "sequelize";
-import sequelize from "../sequelize.js";
+import { DataTypes } from 'sequelize';
+import sequelize from '../sequelize.js';
+import Recipe from "./Recipe.js";
 
 const Ingredient = sequelize.define(
   "ingredient",
   {
+    id: {
+      type: DataTypes.UUID,
+      defaultValue: DataTypes.UUIDV4,
+      allowNull: false,
+      primaryKey: true
+    },
     name: {
       type: DataTypes.STRING,
       allowNull: false,
@@ -22,6 +29,5 @@ const Ingredient = sequelize.define(
   }
 );
 
-// Ingredient.sync({ force: true });
 
 export default Ingredient;
