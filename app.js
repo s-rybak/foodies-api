@@ -3,13 +3,18 @@ import express from "express";
 import morgan from "morgan";
 import cors from "cors";
 
-import sequelize from "./db/sequelize.js";
-import authRouter from "./routes/authRouter.js";
 import {
   defaultPublicFolderName,
   imagesAllowedExtensions,
 } from "./constants/constants.js";
+
+import recipesRouter from "./routes/recipesRouter.js";
+import sequelize from "./db/sequelize.js";
+import authRouter from "./routes/authRouter.js";
 import usersRouter from "./routes/usersRouter.js";
+import categoriesRouter from "./routes/categoriesRouter.js";
+import ingredientsRouter from "./routes/ingredientsRouter.js";
+import areasRouter from "./routes/areasRouter.js";
 
 const WEB_SERVER_PORT = Number(process.env.PORT) || 3000;
 
@@ -25,13 +30,17 @@ app.use(
   })
 );
 
+app.use("/api/recipes", recipesRouter);
+app.use("/api", recipesRouter);
+
 app.use("/api/status", (_, res) => {
   res.json({ status: "OK" });
 });
-
 app.use("/api/auth", authRouter);
-
 app.use("/api/users", usersRouter);
+app.use("/api/categories", categoriesRouter);
+app.use("/api/ingredients", ingredientsRouter);
+app.use("/api/areas", areasRouter);
 
 app.use((_, res) => {
   res.status(404).json({ message: "Route not found" });
