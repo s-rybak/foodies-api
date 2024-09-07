@@ -1,8 +1,7 @@
+import ctrlWrapper from "../decorators/ctrlWrapper.js";
+import listIngredients from "../services/ingredientsServices.js";
 
-import ctrlWrapper from '../helpers/ctrlWrapper.js';
-import listIngredients from '../services/ingredientsServices.js';
-
-const getAllIngredients = async (req, res) => { 
+const getAllIngredients = async (req, res) => {
   const result = await listIngredients();
   res.json(result);
 };
