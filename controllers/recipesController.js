@@ -1,17 +1,14 @@
-
-import HttpError from '../helpers/HttpError.js';
-import { createRecipeSchema } from '../schemas/addRecipeSchema.js';
-import { 
+import HttpError from "../helpers/HttpError.js";
+import { createRecipeSchema } from "../schemas/addRecipeSchema.js";
+import {
   createRecipe,
   listRecipes,
   getRecipeById,
   getPopularRecipes,
- } from "../services/recipesServices.js";
+} from "../services/recipesServices.js";
 
-
- export const addRecipe = async (req, res) => {
+export const addRecipe = async (req, res) => {
   try {
-
     const { error } = createRecipeSchema.validate(req.body);
     if (error) {
       return res.status(400).json({ details: error.details });
@@ -32,7 +29,13 @@ export const getAllRecipes = async (req, res, next) => {
   try {
     console.log("in controller");
 
-    const { category, ingredient, region, page = 1, limit = 10 } = req.query || {};
+    const {
+      category,
+      ingredient,
+      region,
+      page = 1,
+      limit = 10,
+    } = req.query || {};
 
     const pageInt = parseInt(page);
     const limitInt = parseInt(limit);
@@ -41,7 +44,13 @@ export const getAllRecipes = async (req, res, next) => {
       return next(HttpError(400, "Invalid pagination parameters."));
     }
 
-    const { count, rows } = await listRecipes({ category, ingredient, region, page: pageInt, limit: limitInt });
+    const { count, rows } = await listRecipes({
+      category,
+      ingredient,
+      region,
+      page: pageInt,
+      limit: limitInt,
+    });
 
     if (count === 0) {
       return res.status(404).json({ message: "No recipes found." });

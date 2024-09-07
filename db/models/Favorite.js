@@ -13,6 +13,6 @@ const Favorite = sequelize.define("favorite", {
   },
 });
 
-  // Favorite.sync({ force: true });
+// Favorite.sync({ force: true });
 
 export default Favorite;
