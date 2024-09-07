@@ -1,5 +1,5 @@
+import ctrlWrapper from "../decorators/ctrlWrapper.js";
 import listAreas from "../services/areasServices.js";
-import ctrlWrapper from "../helpers/ctrlWrapper.js";
 
 const getAllAreas = async (req, res) => {
   const { page = 1, limit = 10 } = req.query;
