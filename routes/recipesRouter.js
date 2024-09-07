@@ -1,4 +1,5 @@
 import { Router } from "express";
+
 import {
   getAllRecipes,
   addRecipe,
@@ -11,13 +12,14 @@ import { createRecipeSchema } from "../schemas/addRecipeSchema.js";
 
 const recipesRouter = Router();
 
+recipesRouter.get("/", ctrlWrapper(getAllRecipes));
+recipesRouter.get("/popular", ctrlWrapper(getPopularRecipesController));
+recipesRouter.get("/:id", ctrlWrapper(getOneRecipe));
+
 recipesRouter.post(
-  "/recipes",
+  "/",
   validateBody(createRecipeSchema),
   ctrlWrapper(addRecipe)
 );
-recipesRouter.get("/popular", ctrlWrapper(getPopularRecipesController));
-recipesRouter.get("/", ctrlWrapper(getAllRecipes));
-recipesRouter.get("/:id", ctrlWrapper(getOneRecipe));
 
 export default recipesRouter;
