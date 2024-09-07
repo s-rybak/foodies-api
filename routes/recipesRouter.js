@@ -18,9 +18,9 @@ recipesRouter.post('/', authMiddleware, validateBody(createRecipeSchema), create
 recipesRouter.delete('/:id/favorites', authMiddleware, removeFromFavorites);
 recipesRouter.get('/favorites', authMiddleware, getUserFavoriteRecipes);
 recipesRouter.delete('/:id', authMiddleware, deleteRecipe);
+recipesRouter.get('/my-recipes', authMiddleware, getUserRecipes);
 recipesRouter.get('/:id', getById);
 recipesRouter.post('/:id/favorites', authMiddleware, addToFavorites);
-recipesRouter.get('/my-recipes', authMiddleware, getUserRecipes);
 
 
 export default recipesRouter;

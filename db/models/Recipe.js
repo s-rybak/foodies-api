@@ -58,13 +58,12 @@ Recipe.belongsTo(Category, {
   foreignKey: 'categoryId'
 });
 
-Recipe.belongsToMany(Ingredient, { through: 'recipe_ingredient' });
+Recipe.belongsToMany(Ingredient, { through: 'recipe_ingredients' });
 
-Ingredient.belongsToMany(Recipe, { through: 'recipe_ingredient' });
+Ingredient.belongsToMany(Recipe, { through: 'recipe_ingredients' });
 
 Category.hasMany(Recipe, {
   foreignKey: 'id'
 });
-
 
 export default Recipe;

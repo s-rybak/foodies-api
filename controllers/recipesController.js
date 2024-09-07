@@ -46,8 +46,8 @@ export const createRecipe = ctrlWrapper(async (req, res) => {
 
 export const getUserRecipes = ctrlWrapper(async (req, res, next) => {
 	const { id: currentUserId } = req.user;
-	const { limit, offset } = req.pagination;
-	const result = await listRecipes({ ownerId: currentUserId, limit, offset });
+	//const { limit, offset } = req.pagination;
+	const result = await listRecipes({ ownerId: currentUserId, limit:10, offset:0 });
 
 	res.json(result);
 });

@@ -4,12 +4,6 @@ import Ingredient from "./Ingredient.js";
 import Recipe from "./Recipe.js";
 
 const RecipeIngredient = sequelize.define('recipe_ingredient', {
-	id: {
-		type: DataTypes.UUID,
-		defaultValue: DataTypes.UUIDV4,
-		allowNull: false,
-		primaryKey: true
-	},
 	recipeId: {
 		type: DataTypes.UUID,
 		references: {

@@ -60,6 +60,7 @@ export const getFavoriteRecipesByUserId = async (userId) => {
     include: [
       {
         model: Recipe,
+        as: 'recipe',
         include: [
           { model: Ingredient, through: { attributes: [] } },
           { model: Category },
@@ -78,7 +79,7 @@ export const addRecipeToFavorites = async (userId, recipeId) => {
 };
 
 export const removeRecipeFromFavorites = async (userId, recipeId) => {
-  return UserFavorite.destroy({
+  return await UserFavorite.destroy({
     where: { ownerId: userId, recipeId }
   });
 };
@@ -90,7 +91,7 @@ export const removeRecipe = async (id) => {
   await UserFavorite.destroy({
     where: { recipeId: id }
   });
-  return Recipe.destroy({
+  return await Recipe.destroy({
     where: { id }
   });
 };
