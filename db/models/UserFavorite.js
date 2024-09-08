@@ -18,9 +18,7 @@ const UserFavorite = sequelize.define('user_favorite', {
 		references: {
 			model: User,
 			key: 'id'
-		},
-		onDelete: 'CASCADE',
-		onUpdate: 'CASCADE'
+		}
 	},
 	recipeId: {
 		type: DataTypes.UUID,
@@ -29,9 +27,7 @@ const UserFavorite = sequelize.define('user_favorite', {
 		references: {
 			model: Recipe,
 			key: 'id'
-		},
-		onDelete: 'CASCADE',
-		onUpdate: 'CASCADE'
+		}
 	}
 });
 
