@@ -92,7 +92,7 @@ const updateAvatar = async (req, res) => {
 const getFollowers = async (req, res, next) => {
   const { userId } = req.params;
   try {
-    const followers = await usersServices.getUserFollowers(userId);
+    const followers = await usersServices.getUserFollowing(userId);
 
     if (!followers || followers.length === 0) {
       throw HttpError(404, 'Followers not found');
@@ -104,9 +104,27 @@ const getFollowers = async (req, res, next) => {
   }
 };
 
+// Get info of user following .
+
+const getFollowing = async (req, res, next) => {
+  const { userId } = req.user;
+  try {
+    const usersFollowing = await usersServices.getUserFollowing(userId);
+
+    if (!usersFollowing || usersFollowing.length === 0) {
+      throw HttpError(404, 'User do not follow for others');
+    }
+
+    res.status(200).json({ usersFollowing });
+  } catch (error) {
+    next(error);
+  }
+};
+
 export default {
   getUserInfo: ctrlWrapper(getUserInfo),
   getCurrentUser: ctrlWrapper(getCurrentUser),
   updateAvatar: ctrlWrapper(updateAvatar),
   getFollowers: ctrlWrapper(getFollowers),
+  getFollowing: ctrlWrapper(getFollowing),
 };

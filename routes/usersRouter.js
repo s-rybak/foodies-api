@@ -24,6 +24,11 @@ usersRouter.get(
   authenticateMiddleware,
   usersControllers.getFollowers
 );
+usersRouter.get(
+  '/:userId/following',
+  authenticateMiddleware,
+  usersControllers.getFollowing
+);
 
 usersRouter.patch(
   '/avatars',

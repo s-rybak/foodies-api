@@ -79,15 +79,47 @@ async function getUserFollowers(userId) {
           attributes: ['id'],
         },
       ],
+      attributes: ['id', 'name', 'avatar'],
     });
     const result = followers.map(user => ({
       id: user.id,
       name: user.name,
+      avatar: user.avatar,
       recipeCount: user.Recipes.length,
     }));
 
     return result;
-    
+  } catch (error) {
+    throw new Error(error.message);
+  }
+}
+async function getUserFollowing(userId) {
+  try {
+    const following = await User.findAll({
+      include: [
+        {
+          model: Follow,
+          as: 'Following',
+          where: { followerId: userId },
+          attributes: [],
+        },
+        {
+          model: Recipe,
+          as: 'Recipes',
+          attributes: ['id'],
+        },
+      ],
+      attributes: ['id', 'name', 'avatar'],
+    });
+
+    const result = following.map(user => ({
+      id: user.id,
+      name: user.name,
+      avatar: user.avatar,
+      recipeCount: user.Recipes.length,
+    }));
+
+    return result;
   } catch (error) {
     throw new Error(error.message);
   }
@@ -98,4 +130,5 @@ export default {
   getUser,
   updateUser,
   getUserFollowers,
+  getUserFollowing,
 };
