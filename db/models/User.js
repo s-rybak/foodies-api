@@ -61,12 +61,21 @@ const User = sequelize.define(
         notEmpty: true,
       },
     },
+
+    followers: {
+      type: DataTypes.JSON,
+      defaultValue: [],
+    },
+    following: {
+      type: DataTypes.JSON,
+      defaultValue: [],
+    },
   },
   {
     hooks: {
-      afterFind: result => {
+      afterFind: (result) => {
         if (Array.isArray(result)) {
-          result.forEach(record => {
+          result.forEach((record) => {
             delete record.dataValues.updatedAt;
             delete record.dataValues.createdAt;
           });
@@ -75,15 +84,15 @@ const User = sequelize.define(
           delete result.dataValues.createdAt;
         }
       },
-      afterCreate: record => {
+      afterCreate: (record) => {
         delete record.dataValues.updatedAt;
         delete record.dataValues.createdAt;
       },
-      afterUpdate: record => {
+      afterUpdate: (record) => {
         delete record.dataValues.updatedAt;
         delete record.dataValues.createdAt;
       },
-      afterDestroy: record => {
+      afterDestroy: (record) => {
         delete record.dataValues.updatedAt;
         delete record.dataValues.createdAt;
       },

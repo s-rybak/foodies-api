@@ -8,6 +8,9 @@ import {
 import ctrlWrapper from "../decorators/ctrlWrapper.js";
 import usersServices from "../services/usersServices.js";
 import fileServices from "../services/fileServices.js";
+import User from "../db/models/User.js";
+import Recipe from "../db/models/Recipe.js";
+import Favorite from "../db/models/Favorite.js";
 
 /**
  * Controller to get user information.
@@ -18,7 +21,7 @@ import fileServices from "../services/fileServices.js";
  * @param {Object} res Express response object.
  * @param {Function} next Express next middleware function.
  */
-const getUserInfo = (req, res) => {
+/*const getUserInfo = (req, res) => {
   const { id, name, email, avatar, followers = [], following = [] } = req.user;
 
   const user = {
@@ -35,21 +38,100 @@ const getUserInfo = (req, res) => {
 
   res.json(user);
 };
+*/
+
+const getUserDetails = async (req, res) => {
+  try {
+    const userId = req.params.userId;
+    const authUserId = req.user.id;
+    const user = await User.findById(userId).select(
+      "avatar name email followers following"
+    );
+    const createRecipeCount = await Recipe.countDocuments({ owner: userId });
+    const followersUserCount = user.followers.length;
+
+    if (!user) {
+      return res.status(404).json({
+        message: "There is no user with such id",
+      });
+    }
+    if (userId === authUserId) {
+      const countFavouriteRecipe = await Favorite.countDocuments({
+        userId: authUserId,
+      });
+      const followingUsersCount = user.following.length;
+
+      return res.json({
+        avatar: user.avatar,
+        name: user.name,
+        email: user.email,
+        createRecipeCount,
+        countFavouriteRecipe,
+        followingUsersCount,
+        followersUserCount,
+      });
+    } else {
+      return res.json({
+        avatar: user.avatar,
+        name: user.name,
+        email: user.email,
+        createRecipeCount,
+        followersUserCount,
+      });
+    }
+  } catch (error) {
+    return res.status(500).json({
+      message: "Server Error ",
+    });
+  }
+};
+
+/**
+ * Controller to get the list of users that the authenticated user is following.
+ *
+ * @param {Object} req Express request object.
+ * @param {Object} res Express response object.
+ */
+const getFollowingUsers = async (req, res) => {
+  try {
+    const authUserId = req.user.id;
+
+    const authUser = await User.findById(authUserId)
+      .select("following")
+      .populate("following", "name avatar email");
+
+    if (!authUser) {
+      return res.status(404).json({
+        message: "Authenticated user not found",
+      });
+    }
+
+    return res.json({
+      following: authUser.following,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      message: "Server Error",
+    });
+  }
+};
 
 /**
  * Controller to get the currently authenticated user's information.
- * It retrieves and sends the current user's ID, name, email, and avatar.
+ * It retrieves and sends the current user's ID, name, email, avatar followers, and following.
  *
  * @param {Object} req Express request object.
  * @param {Object} res Express response object.
  */
 const getCurrentUser = (req, res) => {
-  const { id, name, email, avatar } = req.user;
+  const { id, name, email, avatar, followers, following } = req.user;
   res.json({
     id,
     name,
     email,
     avatar,
+    followersCount: followers.length,
+    followingCount: following.length,
   });
 };
 
@@ -88,4 +170,6 @@ export default {
   getUserInfo: ctrlWrapper(getUserInfo),
   getCurrentUser: ctrlWrapper(getCurrentUser),
   updateAvatar: ctrlWrapper(updateAvatar),
+  getUserDetails,
+  getFollowingUsers,
 };
