@@ -10,7 +10,8 @@ import usersServices from "../services/usersServices.js";
 import fileServices from "../services/fileServices.js";
 import User from "../db/models/User.js";
 import Recipe from "../db/models/Recipe.js";
-import Favorite from "../db/models/Favorite.js";
+import Follow from "../db/models/Follow.js";
+import UserFavorite from "../db/models/UserFavorite.js";
 
 /**
  * Controller to get user information.
@@ -48,7 +49,9 @@ const getUserDetails = async (req, res) => {
       "avatar name email followers following"
     );
     const createRecipeCount = await Recipe.countDocuments({ owner: userId });
-    const followersUserCount = user.followers.length;
+    const followersUserCount = await Follow.countDocuments({
+      followerId: userId,
+    });
 
     if (!user) {
       return res.status(404).json({
@@ -56,10 +59,12 @@ const getUserDetails = async (req, res) => {
       });
     }
     if (userId === authUserId) {
-      const countFavouriteRecipe = await Favorite.countDocuments({
-        userId: authUserId,
+      const countFavouriteRecipe = await UserFavorite.countDocuments({
+        ownerId: authUserId,
       });
-      const followingUsersCount = user.following.length;
+      const followingUsersCount = await Follow.countDocuments({
+        followingId: authUserId,
+      });
 
       return res.json({
         avatar: user.avatar,
@@ -92,29 +97,6 @@ const getUserDetails = async (req, res) => {
  * @param {Object} req Express request object.
  * @param {Object} res Express response object.
  */
-const getFollowingUsers = async (req, res) => {
-  try {
-    const authUserId = req.user.id;
-
-    const authUser = await User.findById(authUserId)
-      .select("following")
-      .populate("following", "name avatar email");
-
-    if (!authUser) {
-      return res.status(404).json({
-        message: "Authenticated user not found",
-      });
-    }
-
-    return res.json({
-      following: authUser.following,
-    });
-  } catch (error) {
-    return res.status(500).json({
-      message: "Server Error",
-    });
-  }
-};
 
 /**
  * Controller to get the currently authenticated user's information.
@@ -167,9 +149,8 @@ const updateAvatar = async (req, res) => {
 };
 
 export default {
-  getUserInfo: ctrlWrapper(getUserInfo),
+  //getUserInfo: ctrlWrapper(getUserInfo),
   getCurrentUser: ctrlWrapper(getCurrentUser),
   updateAvatar: ctrlWrapper(updateAvatar),
-  getUserDetails,
-  getFollowingUsers,
+  getUserDetails: ctrlWrapper(getUserDetails),
 };
