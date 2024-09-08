@@ -62,12 +62,14 @@ export const deleteRecipe = ctrlWrapper(async (req, res, next) => {
 	if (!result) {
 		return next(HttpError(404));
 	}
+	res.status(200).json({ message: 'Recipe deleted successfully' });
 });
 
 export const getUserFavoriteRecipes = async (req, res, next) => {
 	try {
+		const { page = 1, limit = 10 } = req.query;
 		const userId = req.user.id;
-		const favoriteRecipes = await getFavoriteRecipesByUserId(userId);
+		const favoriteRecipes = await getFavoriteRecipesByUserId(userId, { page, limit });
 
 		if (!favoriteRecipes || favoriteRecipes.length === 0) {
 			return res.status(404).json({ message: 'No favorite recipes found' });
@@ -117,7 +119,7 @@ export const removeFromFavorites = async (req, res, next) => {
 			return next(HttpError(404, 'Recipe not found'));
 		}
 		await removeRecipeFromFavorites(userId, id);
-		res.status(204);
+		res.status(204).json();
 	} catch (e) {
 		next(e);
 	}
