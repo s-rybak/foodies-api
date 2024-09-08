@@ -33,29 +33,28 @@ export const createRecipeSchema = Joi.object({
 		}),
 	categoryId: Joi.string()
 		.required()
+		.uuid()
 		.messages({
 			'string.empty': 'Category ID is required',
 			'any.required': 'Category ID is required'
 		}),
 	areaId: Joi.string()
 		.required()
+		.uuid()
 		.messages({
 			'string.empty': 'Area ID is required',
 			'any.required': 'Area ID is required'
 		}),
+	userId: Joi.string().uuid().optional(),
 	ingredients: Joi.array()
 		.items(
-			Joi.string()
-				.uuid()
-				.required()
-				.messages({
-					'string.empty': 'Each ingredient ID must not be empty',
-					'string.guid': 'Each ingredient ID must be a valid UUID',
-					'any.required': 'Ingredient ID is required'
-				})
+			Joi.object({
+				id: Joi.string().uuid().required(),
+				measure: Joi.string().required()
+			})
 		)
+		.required()
 		.messages({
-			'array.base': 'Ingredients must be an array',
-			'any.required': 'Ingredients are required'
-		})
+			'any.required': 'Ingredients is required'
+		}),
 });

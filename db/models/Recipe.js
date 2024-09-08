@@ -34,16 +34,30 @@ const Recipe = sequelize.define("recipe", {
   },
   categoryId: {
     type: DataTypes.UUID,
-    allowNull: false
+    allowNull: false,
+    references: {
+      model: Category,
+      key: 'id'
+    }
   },
   areaId: {
     type: DataTypes.UUID,
-    allowNull: false
+    allowNull: false,
+    references: {
+      model: Area,
+      key: 'id'
+    }
   },
   ownerId: {
     type: DataTypes.UUID,
-    allowNull: false
+    allowNull: false,
+    references: {
+      model: User,
+      key: 'id'
+    }
   }
+}, {
+  timestamps: true // Sequelize автоматически добавляет createdAt и updatedAt
 });
 
 Recipe.belongsTo(Area, {
@@ -57,13 +71,16 @@ Recipe.belongsTo(User, {
 Recipe.belongsTo(Category, {
   foreignKey: 'categoryId'
 });
+User.hasMany(Recipe, {
+  foreignKey: 'ownerId',
+});
 
 Recipe.belongsToMany(Ingredient, { through: 'recipe_ingredients' });
 
 Ingredient.belongsToMany(Recipe, { through: 'recipe_ingredients' });
 
 Category.hasMany(Recipe, {
-  foreignKey: 'id'
+  foreignKey: 'categoryId'
 });
 
 export default Recipe;
