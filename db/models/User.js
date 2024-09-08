@@ -2,6 +2,7 @@ import { DataTypes } from 'sequelize';
 
 import sequelize from '../sequelize.js';
 import { emailRegex } from '../../constants/constants.js';
+import Follow from './Follow.js';
 
 /**
  * Sequelize model for User.
@@ -61,15 +62,6 @@ const User = sequelize.define(
         notEmpty: true,
       },
     },
-
-    followers: {
-      type: DataTypes.JSON,
-      defaultValue: [],
-    },
-    following: {
-      type: DataTypes.JSON,
-      defaultValue: [],
-    },
   },
   {
     hooks: {
@@ -99,6 +91,8 @@ const User = sequelize.define(
     },
   }
 );
+User.hasMany(Follow, { foreignKey: 'followerId', as: 'Followers' });
+User.hasMany(Follow, { foreignKey: 'followedId', as: 'Following' });
 
 // User.sync({ force: true });
 

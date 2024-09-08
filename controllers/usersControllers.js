@@ -89,30 +89,18 @@ const updateAvatar = async (req, res) => {
 
 // Get info followers of a user.
 
-const getUserFollowers = async (req, res, next) => {
+const getFollowers = async (req, res, next) => {
   const { userId } = req.params;
-
   try {
-    const user = await usersServices.getUser({ id: userId });
+    const followers = await usersServices.getUserFollowers(userId);
 
-    if (!user) {
-      return next(HttpError(404, 'USer not found'));
+    if (!followers || followers.length === 0) {
+      throw HttpError(404, 'Followers not found');
     }
 
-    const recipes = await listRecipes({ ownerId: userId });
-
-    const recipeCount = recipes.length;
-
-    res.json({
-      id: user.id,
-      name: user.name,
-      email: user.email,
-      avatar: user.avatar,
-      followers: user.followers.length,
-      recipes: recipeCount,
-    });
+    res.status(200).json({ followers });
   } catch (error) {
-    next(HttpError(500, 'Error fetching user followers and recipes'));
+    next(error);
   }
 };
 
@@ -120,5 +108,5 @@ export default {
   getUserInfo: ctrlWrapper(getUserInfo),
   getCurrentUser: ctrlWrapper(getCurrentUser),
   updateAvatar: ctrlWrapper(updateAvatar),
-  getUserFollowers: ctrlWrapper(getUserFollowers),
+  getFollowers: ctrlWrapper(getFollowers),
 };

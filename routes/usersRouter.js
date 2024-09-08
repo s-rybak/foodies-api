@@ -22,7 +22,7 @@ usersRouter.get(
 usersRouter.get(
   '/:userId/followers',
   authenticateMiddleware,
-  usersControllers.getUserFollowers
+  usersControllers.getFollowers
 );
 
 usersRouter.patch(

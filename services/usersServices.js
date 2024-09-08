@@ -2,6 +2,8 @@ import bcrypt from 'bcrypt';
 import { v4 as uuidv4 } from 'uuid';
 
 import User from '../db/models/User.js';
+import Follow from '../db/models/Follow.js';
+import Recipe from '../db/models/Recipe.js';
 
 /**
  * Registers a new user.
@@ -61,10 +63,39 @@ async function updateUser(id, data) {
   return rows ? updateReply?.dataValues : null;
 }
 
+async function getUserFollowers(userId) {
+  try {
+    const followers = await User.findAll({
+      include: [
+        {
+          model: Follow,
+          as: 'Followers',
+          where: { followedId: userId },
+          attributes: [],
+        },
+        {
+          model: Recipe,
+          as: 'Recipes',
+          attributes: ['id'],
+        },
+      ],
+    });
+    const result = followers.map(user => ({
+      id: user.id,
+      name: user.name,
+      recipeCount: user.Recipes.length,
+    }));
+
+    return result;
+    
+  } catch (error) {
+    throw new Error(error.message);
+  }
+}
 
 export default {
   createUser,
   getUser,
   updateUser,
- 
+  getUserFollowers,
 };
