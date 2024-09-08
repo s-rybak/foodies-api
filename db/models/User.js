@@ -61,15 +61,6 @@ const User = sequelize.define(
         notEmpty: true,
       },
     },
-
-    followers: {
-      type: DataTypes.JSON,
-      defaultValue: [],
-    },
-    following: {
-      type: DataTypes.JSON,
-      defaultValue: [],
-    },
   },
   {
     hooks: {
@@ -100,6 +91,6 @@ const User = sequelize.define(
   }
 );
 
-// User.sync({ force: true });
+//User.sync({ force: true });
 
 export default User;

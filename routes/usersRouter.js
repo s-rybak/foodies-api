@@ -27,12 +27,6 @@ usersRouter.get(
   usersControllers.getUserDetails
 );
 
-usersRouter.get(
-  "/users/following",
-  authenticateMiddleware,
-  usersControllers.getFollowingUsers
-);
-
 usersRouter.patch(
   "/avatars",
   authenticateMiddleware,
