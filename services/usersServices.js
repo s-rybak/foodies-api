@@ -2,6 +2,9 @@ import bcrypt from "bcrypt";
 import { v4 as uuidv4 } from "uuid";
 
 import User from "../db/models/User.js";
+import Recipe from "../db/models/Recipe.js";
+import Follow from "../db/models/Follow.js";
+import UserFavorite from "../db/models/UserFavorite.js";
 
 /**
  * Registers a new user.
@@ -61,8 +64,54 @@ async function updateUser(id, data) {
   return rows ? updateReply?.dataValues : null;
 }
 
+const getUserDetails = async (userId, authUserId) => {
+  try {
+    const user = await User.findById(userId).select(
+      "avatar name email followers following"
+    );
+    const createRecipeCount = await Recipe.countDocuments({ owner: userId });
+    const followersUserCount = await Follow.countDocuments({
+      followerId: userId,
+    });
+
+    if (!user) {
+      throw new Error("User not found");
+    }
+
+    if (userId === authUserId) {
+      const countFavouriteRecipe = await UserFavorite.countDocuments({
+        ownerId: authUserId,
+      });
+      const followingUsersCount = await Follow.countDocuments({
+        followingId: authUserId,
+      });
+
+      return {
+        avatar: user.avatar,
+        name: user.name,
+        email: user.email,
+        createRecipeCount,
+        countFavouriteRecipe,
+        followingUsersCount,
+        followersUserCount,
+      };
+    } else {
+      return {
+        avatar: user.avatar,
+        name: user.name,
+        email: user.email,
+        createRecipeCount,
+        followersUserCount,
+      };
+    }
+  } catch (error) {
+    throw new Error("Server Error");
+  }
+};
+
 export default {
   createUser,
   getUser,
   updateUser,
+  getUserDetails,
 };
