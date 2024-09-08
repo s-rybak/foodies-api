@@ -62,6 +62,7 @@ export const deleteRecipe = ctrlWrapper(async (req, res, next) => {
 	if (!result) {
 		return next(HttpError(404));
 	}
+	res.status(200).json({ message: 'Recipe deleted successfully' });
 });
 
 export const getUserFavoriteRecipes = async (req, res, next) => {

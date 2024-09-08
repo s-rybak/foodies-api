@@ -11,9 +11,7 @@ const RecipeIngredient = sequelize.define('recipe_ingredients', {
 			key: 'id'
 		},
 		allowNull: false,
-		primaryKey: true,
-		onDelete: 'CASCADE',
-		onUpdate: 'CASCADE'
+		primaryKey: true
 	},
 	ingredientId: {
 		type: DataTypes.UUID,
@@ -22,9 +20,7 @@ const RecipeIngredient = sequelize.define('recipe_ingredients', {
 			key: 'id'
 		},
 		allowNull: false,
-		primaryKey: true,
-		onDelete: 'CASCADE',
-		onUpdate: 'CASCADE'
+		primaryKey: true
 	},
 	measure: {
 		type: DataTypes.STRING,

@@ -45,7 +45,6 @@ export const createRecipeSchema = Joi.object({
 			'string.empty': 'Area ID is required',
 			'any.required': 'Area ID is required'
 		}),
-	userId: Joi.string().uuid().optional(),
 	ingredients: Joi.array()
 		.items(
 			Joi.object({
