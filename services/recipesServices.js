@@ -78,9 +78,16 @@ export const createRecipes = async ({ ingredients, ...recipeBody }) => {
   }
 };
 
-export const getFavoriteRecipesByUserId = async (userId) => {
+export const getFavoriteRecipesByUserId = async (userId, pagination) => {
+  const { page = 1, limit = 20 } = pagination;
+  const normalizedLimit = Number(limit);
+  const offset = (Number(page) - 1) * normalizedLimit;
+
   return UserFavorite.findAll({
     where: { ownerId: userId },
+    offset,
+    limit: normalizedLimit,
+    order: [["id", "asc"]],
     include: [
       {
         model: Recipe,

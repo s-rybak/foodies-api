@@ -66,8 +66,9 @@ export const deleteRecipe = ctrlWrapper(async (req, res, next) => {
 
 export const getUserFavoriteRecipes = async (req, res, next) => {
 	try {
+		const { page = 1, limit = 10 } = req.query;
 		const userId = req.user.id;
-		const favoriteRecipes = await getFavoriteRecipesByUserId(userId);
+		const favoriteRecipes = await getFavoriteRecipesByUserId(userId, { page, limit });
 
 		if (!favoriteRecipes || favoriteRecipes.length === 0) {
 			return res.status(404).json({ message: 'No favorite recipes found' });
