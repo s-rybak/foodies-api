@@ -3,7 +3,7 @@ import sequelize from "../sequelize.js";
 import Ingredient from "./Ingredient.js";
 import Recipe from "./Recipe.js";
 
-const RecipeIngredient = sequelize.define('recipe_ingredient', {
+const RecipeIngredient = sequelize.define('recipe_ingredients', {
 	recipeId: {
 		type: DataTypes.UUID,
 		references: {
@@ -11,9 +11,7 @@ const RecipeIngredient = sequelize.define('recipe_ingredient', {
 			key: 'id'
 		},
 		allowNull: false,
-		primaryKey: true,
-		onDelete: 'CASCADE',
-		onUpdate: 'CASCADE'
+		primaryKey: true
 	},
 	ingredientId: {
 		type: DataTypes.UUID,
@@ -22,10 +20,13 @@ const RecipeIngredient = sequelize.define('recipe_ingredient', {
 			key: 'id'
 		},
 		allowNull: false,
-		primaryKey: true,
-		onDelete: 'CASCADE',
-		onUpdate: 'CASCADE'
+		primaryKey: true
+	},
+	measure: {
+		type: DataTypes.STRING,
+		allowNull: true
 	}
 });
+
 
 export default RecipeIngredient;
