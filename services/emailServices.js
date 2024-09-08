@@ -1,6 +1,6 @@
-import nodemailer from 'nodemailer';
-import path from 'node:path';
-import { defaultPublicFolderName } from '../constants/constants.js';
+import nodemailer from "nodemailer";
+import path from "node:path";
+import { defaultPublicFolderName } from "../constants/constants.js";
 
 const {
   MAILER_HOST,
@@ -13,14 +13,13 @@ const {
 const nodemailerConfig = {
   host: MAILER_HOST,
   port: MAILER_PORT, // 25, 465, 587, 2525
-  secureConnection: true, // we need to disable secureConnection because we use SSLv3 for icloud
+  secureConnection: false, // we need to disable secureConnection because we use SSLv3 for icloud
   auth: {
     user: MAILER_FROM_EMAIL,
     pass: MAILER_PASSWORD,
   },
   tls: {
-    ciphers: 'SSLv3', // because of icloud mail
-    rejectUnauthorized: false,
+    ciphers: "SSLv3", // because of icloud mail
   },
 };
 
@@ -37,9 +36,9 @@ const sendEmail = data => {
     from,
     attachments: [
       {
-        filename: 'logo.png',
-        path: path.resolve(defaultPublicFolderName, 'logo.png'),
-        cid: 'logo@foodies-api',
+        filename: "logo.png",
+        path: path.resolve(defaultPublicFolderName, "logo.png"),
+        cid: "logo@foodies-api",
       },
     ],
   };
