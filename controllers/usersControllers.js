@@ -1,13 +1,16 @@
-import * as fs from "node:fs/promises";
-import path from "node:path";
+import * as fs from 'node:fs/promises';
+import path from 'node:path';
 
 import {
   defaultAvatarFileName,
   avatarsFolderRelPath,
-} from "../constants/constants.js";
-import ctrlWrapper from "../decorators/ctrlWrapper.js";
-import usersServices from "../services/usersServices.js";
-import fileServices from "../services/fileServices.js";
+} from '../constants/constants.js';
+import ctrlWrapper from '../decorators/ctrlWrapper.js';
+import HttpError from '../helpers/HttpError.js';
+
+import usersServices from '../services/usersServices.js';
+import fileServices from '../services/fileServices.js';
+import { listRecipes } from '../services/recipesServices.js';
 
 /**
  * Controller to get user information.
@@ -70,7 +73,7 @@ const updateAvatar = async (req, res) => {
   const newAvatarRelPath = await fileServices.saveFileToServerFileSystem(
     req.file,
     avatarsFolderRelPath,
-    "avatar",
+    'avatar',
     req.user.avatar,
     defaultAvatarFileName
   );
@@ -84,8 +87,38 @@ const updateAvatar = async (req, res) => {
   res.json({ avatar });
 };
 
+// Get info followers of a user.
+
+const getUserFollowers = async (req, res, next) => {
+  const { userId } = req.params;
+
+  try {
+    const user = await usersServices.getUser({ id: userId });
+
+    if (!user) {
+      return next(HttpError(404, 'USer not found'));
+    }
+
+    const recipes = await listRecipes({ ownerId: userId });
+
+    const recipeCount = recipes.length;
+
+    res.json({
+      id: user.id,
+      name: user.name,
+      email: user.email,
+      avatar: user.avatar,
+      followers: user.followers.length,
+      recipes: recipeCount,
+    });
+  } catch (error) {
+    next(HttpError(500, 'Error fetching user followers and recipes'));
+  }
+};
+
 export default {
   getUserInfo: ctrlWrapper(getUserInfo),
   getCurrentUser: ctrlWrapper(getCurrentUser),
   updateAvatar: ctrlWrapper(updateAvatar),
+  getUserFollowers: ctrlWrapper(getUserFollowers),
 };

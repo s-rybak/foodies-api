@@ -1,7 +1,7 @@
-import bcrypt from "bcrypt";
-import { v4 as uuidv4 } from "uuid";
+import bcrypt from 'bcrypt';
+import { v4 as uuidv4 } from 'uuid';
 
-import User from "../db/models/User.js";
+import User from '../db/models/User.js';
 
 /**
  * Registers a new user.
@@ -23,8 +23,8 @@ async function createUser(data) {
 
     return reply?.dataValues;
   } catch (error) {
-    if (error.name === "SequelizeUniqueConstraintError") {
-      error.message = "Email in use";
+    if (error.name === 'SequelizeUniqueConstraintError') {
+      error.message = 'Email in use';
     }
     throw error;
   }
@@ -61,8 +61,10 @@ async function updateUser(id, data) {
   return rows ? updateReply?.dataValues : null;
 }
 
+
 export default {
   createUser,
   getUser,
   updateUser,
+ 
 };
