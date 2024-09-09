@@ -4,6 +4,21 @@ export const routerUserFavoriteRecipeSchema = Joi.object({
 	page: Joi.number().integer().min(1).default(1),
 	limit: Joi.number().integer().min(1).max(100).default(10)
 });
+export const routerUserRecipeSchema = Joi.object({
+	page: Joi.number().integer().min(1).default(1),
+	limit: Joi.number().integer().min(1).max(100).default(10)
+});
+
+export const queryRecipes = Joi.object({
+	ownerId: Joi.string().uuid(),
+	ingredient: Joi.alternatives(Joi.string().uuid(), Joi.array().items(Joi.string().uuid())),
+	category: Joi.alternatives(Joi.string().uuid(), Joi.array().items(Joi.string().uuid())),
+	area: Joi.alternatives(Joi.string().uuid(), Joi.array().items(Joi.string().uuid())),
+	page: Joi.number().integer().min(1).default(1),
+	limit: Joi.number().integer().min(1).max(100).default(10)
+});
+
+
 
 export const createRecipeSchema = Joi.object({
 	title: Joi.string()
