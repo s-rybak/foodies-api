@@ -74,12 +74,12 @@ async function getUserFollowers(userId, pagination = {}) {
       include: [
         {
           model: User,
-          as: 'UserFollower', 
+          as: 'follower',
           attributes: ['id', 'name', 'avatar'],
           include: [
             {
               model: Recipe,
-              as: 'Recipes', 
+              as: 'recipes',
               attributes: ['id'],
             },
           ],
@@ -95,10 +95,10 @@ async function getUserFollowers(userId, pagination = {}) {
     });
 
     const result = followers.map(follow => ({
-      id: follow.UserFollower.id,
-      name: follow.UserFollower.name,
-      avatar: follow.UserFollower.avatar,
-      recipeCount: follow.UserFollower.Recipes.length,
+      id: follow.follower.id,
+      name: follow.follower.name,
+      avatar: follow.follower.avatar,
+      recipeCount: follow.follower.recipes.length,
     }));
 
     return {
@@ -119,22 +119,22 @@ async function getUserFollowing(userId, pagination = {}) {
 
   try {
     const following = await Follow.findAll({
-      where: { followerId: userId },
+      where: { '$follow.followerId$': userId },
       include: [
         {
           model: User,
-          as: 'UserFollowing', 
+          as: 'followed',
           attributes: ['id', 'name', 'avatar'],
           include: [
             {
               model: Recipe,
-              as: 'Recipes', 
+              as: 'recipes',
               attributes: ['id'],
             },
           ],
         },
       ],
-      attributes: [],
+      attributes: ['followerId', 'followedId'],
       offset,
       limit: normalizedLimit,
     });
@@ -144,10 +144,10 @@ async function getUserFollowing(userId, pagination = {}) {
     });
 
     const result = following.map(follow => ({
-      id: follow.UserFollowing.id,
-      name: follow.UserFollowing.name,
-      avatar: follow.UserFollowing.avatar,
-      recipeCount: follow.UserFollowing.Recipes.length,
+      id: follow.followed.id,
+      name: follow.followed.name,
+      avatar: follow.followed.avatar,
+      recipeCount: follow.followed.recipes.length,
     }));
 
     return {

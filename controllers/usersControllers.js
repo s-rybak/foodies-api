@@ -111,7 +111,7 @@ const getFollowers = async (req, res, next) => {
 
 const getFollowing = async (req, res, next) => {
   const { page = 1, limit = 10 } = req.query;
-  const { userId } = req.user;
+  const { userId } = req.params;
   try {
     const usersFollowing = await usersServices.getUserFollowing(userId, {
       page,
