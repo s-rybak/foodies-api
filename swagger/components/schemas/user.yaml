@@ -10,8 +10,8 @@ required:
   - avatar
 properties:
   id:
-    description: "User's id"
-    type: uuid
+    description: "User's id of uuid type"
+    type: string
     example: e44811b3-5b82-43c7-a187-817de4a21b8e
   email:
     description: "User's e-mail"
