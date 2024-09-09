@@ -1,7 +1,9 @@
-import bcrypt from "bcrypt";
-import { v4 as uuidv4 } from "uuid";
+import bcrypt from 'bcrypt';
+import { v4 as uuidv4 } from 'uuid';
 
-import User from "../db/models/User.js";
+import User from '../db/models/User.js';
+import Follow from '../db/models/Follow.js';
+import Recipe from '../db/models/Recipe.js';
 
 /**
  * Registers a new user.
@@ -23,8 +25,8 @@ async function createUser(data) {
 
     return reply?.dataValues;
   } catch (error) {
-    if (error.name === "SequelizeUniqueConstraintError") {
-      error.message = "Email in use";
+    if (error.name === 'SequelizeUniqueConstraintError') {
+      error.message = 'Email in use';
     }
     throw error;
   }
@@ -61,8 +63,109 @@ async function updateUser(id, data) {
   return rows ? updateReply?.dataValues : null;
 }
 
+async function getUserFollowers(userId, pagination = {}) {
+  const { page = 1, limit = 10 } = pagination;
+  const normalizedLimit = Number(limit);
+  const offset = (Number(page) - 1) * normalizedLimit;
+
+  try {
+    const followers = await Follow.findAll({
+      where: { followedId: userId },
+      include: [
+        {
+          model: User,
+          as: 'follower',
+          attributes: ['id', 'name', 'avatar'],
+          include: [
+            {
+              model: Recipe,
+              as: 'recipes',
+              attributes: ['id'],
+            },
+          ],
+        },
+      ],
+      attributes: [],
+      offset,
+      limit: normalizedLimit,
+    });
+
+    const followersCount = await Follow.count({
+      where: { followedId: userId },
+    });
+
+    const result = followers.map(follow => ({
+      id: follow.follower.id,
+      name: follow.follower.name,
+      avatar: follow.follower.avatar,
+      recipeCount: follow.follower.recipes.length,
+    }));
+
+    return {
+      followersCount,
+      users: result,
+      totalPages: Math.ceil(followersCount / normalizedLimit),
+      currentPage: page,
+    };
+  } catch (error) {
+    throw new Error(error.message);
+  }
+}
+
+async function getUserFollowing(userId, pagination = {}) {
+  const { page = 1, limit = 10 } = pagination;
+  const normalizedLimit = Number(limit);
+  const offset = (Number(page) - 1) * normalizedLimit;
+
+  try {
+    const following = await Follow.findAll({
+      where: { '$follow.followerId$': userId },
+      include: [
+        {
+          model: User,
+          as: 'followed',
+          attributes: ['id', 'name', 'avatar'],
+          include: [
+            {
+              model: Recipe,
+              as: 'recipes',
+              attributes: ['id'],
+            },
+          ],
+        },
+      ],
+      attributes: ['followerId', 'followedId'],
+      offset,
+      limit: normalizedLimit,
+    });
+
+    const followingCount = await Follow.count({
+      where: { followerId: userId },
+    });
+
+    const result = following.map(follow => ({
+      id: follow.followed.id,
+      name: follow.followed.name,
+      avatar: follow.followed.avatar,
+      recipeCount: follow.followed.recipes.length,
+    }));
+
+    return {
+      followingCount,
+      users: result,
+      totalPages: Math.ceil(followingCount / normalizedLimit),
+      currentPage: page,
+    };
+  } catch (error) {
+    throw new Error(error.message);
+  }
+}
+
+
 export default {
   createUser,
   getUser,
   updateUser,
+  getUserFollowers,
+  getUserFollowing,
 };

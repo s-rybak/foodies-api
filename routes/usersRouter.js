@@ -1,29 +1,39 @@
-import { Router } from "express";
+import { Router } from 'express';
 
-import authenticateMiddleware from "../middlewares/authenticateMiddleware.js";
-import { uploadAvatarImageMiddleware } from "../middlewares/uploadImageMiddleware.js";
-import multerErrorHandlingMiddleware from "../middlewares/multerErrorHandlingMiddleware.js";
-import fileUploadValidationMiddleware from "../middlewares/fileUploadValidationMiddleware.js";
-import usersControllers from "../controllers/usersControllers.js";
+import authenticateMiddleware from '../middlewares/authenticateMiddleware.js';
+import { uploadAvatarImageMiddleware } from '../middlewares/uploadImageMiddleware.js';
+import multerErrorHandlingMiddleware from '../middlewares/multerErrorHandlingMiddleware.js';
+import fileUploadValidationMiddleware from '../middlewares/fileUploadValidationMiddleware.js';
+import usersControllers from '../controllers/usersControllers.js';
 
 const usersRouter = Router();
 
 usersRouter.get(
-  "/current",
+  '/current',
   authenticateMiddleware,
   usersControllers.getCurrentUser
 );
 
 usersRouter.get(
-  "/:userId",
+  '/:userId',
   authenticateMiddleware,
   usersControllers.getUserInfo
 );
+usersRouter.get(
+  '/:userId/followers',
+  authenticateMiddleware,
+  usersControllers.getFollowers
+);
+usersRouter.get(
+  '/:userId/following',
+  authenticateMiddleware,
+  usersControllers.getFollowing
+);
 
 usersRouter.patch(
-  "/avatars",
+  '/avatars',
   authenticateMiddleware,
-  uploadAvatarImageMiddleware.single("avatar"),
+  uploadAvatarImageMiddleware.single('avatar'),
   multerErrorHandlingMiddleware,
   fileUploadValidationMiddleware,
   usersControllers.updateAvatar
