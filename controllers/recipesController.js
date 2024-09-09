@@ -12,6 +12,7 @@ import {
 } from "../services/recipesServices.js";
 import Recipe from "../db/models/Recipe.js";
 import UserFavorite from "../db/models/UserFavorite.js";
+import {routerUserFavoriteRecipeSchema} from "../schemas/recipeSchema.js";
 
 
 export const getById = ctrlWrapper(async (req, res, next) => {
@@ -68,6 +69,7 @@ export const deleteRecipe = ctrlWrapper(async (req, res, next) => {
 export const getUserFavoriteRecipes = async (req, res, next) => {
 	try {
 		const { page = 1, limit = 10 } = req.query;
+
 		const userId = req.user.id;
 		const favoriteRecipes = await getFavoriteRecipesByUserId(userId, { page, limit });
 
@@ -92,7 +94,7 @@ export const addToFavorites = async (req, res, next) => {
 		}
 
 		const alreadyFavorite = await UserFavorite.findOne({
-			where: { ownerId: userId, id }
+			where: { ownerId: userId, recipeId: id }
 		});
 
 		if (alreadyFavorite) {
@@ -112,7 +114,7 @@ export const removeFromFavorites = async (req, res, next) => {
 		const userId = req.user.id;
 
 		const recipeFound = await UserFavorite.findOne({
-			where: { ownerId: userId, id }
+			where: { ownerId: userId, recipeId: id }
 		});
 
 		if (!recipeFound) {

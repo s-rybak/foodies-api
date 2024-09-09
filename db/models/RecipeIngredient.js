@@ -6,19 +6,11 @@ import Recipe from "./Recipe.js";
 const RecipeIngredient = sequelize.define('recipe_ingredients', {
 	recipeId: {
 		type: DataTypes.UUID,
-		references: {
-			model: Recipe,
-			key: 'id'
-		},
 		allowNull: false,
 		primaryKey: true
 	},
 	ingredientId: {
 		type: DataTypes.UUID,
-		references: {
-			model: Ingredient,
-			key: 'id'
-		},
 		allowNull: false,
 		primaryKey: true
 	},
@@ -26,6 +18,8 @@ const RecipeIngredient = sequelize.define('recipe_ingredients', {
 		type: DataTypes.STRING,
 		allowNull: true
 	}
+}, {
+	timestamps: false
 });
 
 
