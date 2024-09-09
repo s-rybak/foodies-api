@@ -1,0 +1,25 @@
+openapi: 3.1.0
+info:
+  version: 1.0.0
+  title: foodies app
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  description: This is a documentation of foodies app
+tags:
+  - name: Recipes
+    description: Operations about recipes.
+  - name: Auth
+    description: Auth operations.
+servers:
+  - url: http://localhost:3000
+  - url: https://example.com/api/v1
+paths:
+  /recipes/{id}:
+    get:
+      $ref: ../swagger/paths/recipes/{id}/get.yaml
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer

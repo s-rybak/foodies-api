@@ -1,0 +1,65 @@
+tags:
+  - Recipes
+summary: Get recipe by id
+operationId: getRecipeById
+description: "Get recipe by id"
+security:
+  - bearerAuth: []
+parameters:
+  - in: path
+    name: id
+    required: true
+    schema:
+      type: integer
+      example: 1
+responses:
+  "200":
+    description: "Get recipe by id"
+    content:
+      application/json:
+        schema:
+          type: object
+          required:
+            - id
+            - title
+            - category
+            - area
+            - instructions
+            - description
+            - thumb
+            - time
+            - ingredients
+            - owner
+          properties:
+            id:
+              type: integer
+              example: 1
+            title:
+              type: string
+              example: Battenberg Cake
+            category:
+              type: string
+              example: Dessert
+            area:
+              type: string
+              example: British
+            instructions:
+              type: string
+              example: Heat oven to 180C/160C fan/gas 4 and line the base and ...
+            description:
+              type: string
+              example: A classic British cake made with almond sponge cake and ...
+            thumb:
+              type: string
+              example: https://ftp.goit.study/img/so-yummy/preview/Battenberg%20Cake.jpg
+            time:
+              type: integer
+              example: 60
+            ingredients:
+              type: string
+              example: 640c2dd963a319ea671e367e
+            owner:
+              type: object
+              $ref: "../../../components/schemas/user.yaml"
+  "401":
+    $ref: "../../../components/responses/401.yaml"

@@ -1,0 +1,42 @@
+type: object
+required:
+  - id
+  - email
+  - password
+  - token
+  - verify
+  - verificationToken
+  - name
+  - avatar
+properties:
+  id:
+    description: "User's id"
+    type: uuid
+    example: e44811b3-5b82-43c7-a187-817de4a21b8e
+  email:
+    description: "User's e-mail"
+    type: string
+    example: john.doe@email.com
+  password:
+    description: "User's password"
+    type: string
+    example: dFs2#21j&
+  token:
+    description: "JWT token for user authorization"
+    type: string
+    example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImU0NDgxMWIzLTViODItNDNjNy1hMTg3LTgxN2RlNGEyMWI4ZSIsImlhdCI6MTcyNTcwNjg5NCwiZXhwIjoxNzI1Nzg5Njk0fQ.qdNz3lH38zMBBp90zdJPHoTDrhkRga5qtC0WVuPiFoQ
+  verify:
+    description: "User email verification status"
+    type: boolean
+    example: false
+  verificationToken:
+    description: "Token for user email verification"
+    example: 8eea741a-7439-4299-9d0e-3c00bfbae884
+  name:
+    description: "User's name"
+    type: string
+    example: "John Doe"
+  avatar:
+    description: "Link to user's avatar"
+    type: string
+    example: <avatars/avatar_751aa30d-c9b9-4a99-a5da-1d8f1935f357.png>
