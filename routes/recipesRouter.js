@@ -1,21 +1,28 @@
 import {Router} from "express";
 import {
-    getAllRecipes,
-    addRecipe,
-    getOneRecipe,
-    getPopularRecipesController
+    getById,
+    createRecipe,
+    addToFavorites,
+    removeFromFavorites,
+    deleteRecipe, getUserRecipes, getUserFavoriteRecipes, getAllRecipes, getPopularRecipesController,
 } from "../controllers/recipesController.js";
-import validateBody from "../helpers/validateBody.js";
-import {createRecipeSchema} from "../schemas/recipeSchemas.js";
+import validateBody from "../decorators/validateBody.js";
+import { createRecipeSchema } from "../schemas/recipeSchema.js";
+import authMiddleware from "../middlewares/authenticateMiddleware.js"
 
 
 const recipesRouter = Router();
 
-//TODO add authenticateMiddleware on users merge
-recipesRouter.post("/", validateBody(createRecipeSchema), addRecipe);
-recipesRouter.get("/popular", getPopularRecipesController);
+recipesRouter.post('/', authMiddleware, validateBody(createRecipeSchema), createRecipe);
+recipesRouter.delete('/:id/favorites', authMiddleware, removeFromFavorites);
+recipesRouter.get('/favorites', authMiddleware, getUserFavoriteRecipes);
+recipesRouter.delete('/:id', authMiddleware, deleteRecipe);
+recipesRouter.get('/my-recipes', authMiddleware, getUserRecipes);
+recipesRouter.get('/:id', getById);
+recipesRouter.post('/:id/favorites', authMiddleware, addToFavorites);
 recipesRouter.get("/", getAllRecipes);
-recipesRouter.get("/:id", getOneRecipe);
+recipesRouter.get("/popular", getPopularRecipesController);
+
 
 export default recipesRouter;
 
