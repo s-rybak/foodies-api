@@ -5,12 +5,6 @@ import Recipe from "./Recipe.js";
 
 
 const UserFavorite = sequelize.define('user_favorite', {
-	id: {
-		type: DataTypes.UUID,
-		defaultValue: DataTypes.UUIDV4,
-		allowNull: false,
-		primaryKey: true
-	},
 	ownerId: {
 		type: DataTypes.UUID,
 		allowNull: false,
@@ -20,9 +14,11 @@ const UserFavorite = sequelize.define('user_favorite', {
 		type: DataTypes.UUID,
 		allowNull: false,
 		primaryKey: true,
-	}
+	},
 }, {
-	timestamps: false
+	timestamps: true,
+	createdAt: true,
+	updatedAt: false,
 });
 
 UserFavorite.belongsTo(User, {
