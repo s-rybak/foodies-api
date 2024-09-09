@@ -12,6 +12,7 @@ import {
 } from "../services/recipesServices.js";
 import Recipe from "../db/models/Recipe.js";
 import UserFavorite from "../db/models/UserFavorite.js";
+import {routerUserFavoriteRecipeSchema} from "../schemas/recipeSchema.js";
 
 
 export const getById = ctrlWrapper(async (req, res, next) => {
@@ -67,7 +68,15 @@ export const deleteRecipe = ctrlWrapper(async (req, res, next) => {
 
 export const getUserFavoriteRecipes = async (req, res, next) => {
 	try {
-		const { page = 1, limit = 10 } = req.query;
+		const { error, value } = routerUserFavoriteRecipeSchema.validate(req.query);
+
+		if (error) {
+			return res.status(400).json({ message: error.details[0].message });
+		}
+
+		// Якщо валідація пройшла успішно, беремо валідовані параметри
+		const { page = 1, limit = 10 } = value;
+
 		const userId = req.user.id;
 		const favoriteRecipes = await getFavoriteRecipesByUserId(userId, { page, limit });
 

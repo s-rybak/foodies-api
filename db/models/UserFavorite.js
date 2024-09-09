@@ -15,20 +15,14 @@ const UserFavorite = sequelize.define('user_favorite', {
 		type: DataTypes.UUID,
 		allowNull: false,
 		primaryKey: true,
-		references: {
-			model: User,
-			key: 'id'
-		}
 	},
 	recipeId: {
 		type: DataTypes.UUID,
 		allowNull: false,
 		primaryKey: true,
-		references: {
-			model: Recipe,
-			key: 'id'
-		}
 	}
+}, {
+	timestamps: false
 });
 
 UserFavorite.belongsTo(User, {
