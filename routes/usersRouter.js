@@ -15,11 +15,6 @@ usersRouter.get(
 );
 
 usersRouter.get(
-  '/:userId',
-  authenticateMiddleware,
-  usersControllers.getUserInfo
-);
-usersRouter.get(
   '/:userId/followers',
   authenticateMiddleware,
   usersControllers.getFollowers
@@ -28,6 +23,12 @@ usersRouter.get(
   '/:userId/following',
   authenticateMiddleware,
   usersControllers.getFollowing
+);
+
+usersRouter.get(
+  "/:userId",
+  authenticateMiddleware,
+  usersControllers.getUserDetailsController
 );
 
 usersRouter.patch(
