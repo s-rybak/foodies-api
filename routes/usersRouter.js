@@ -24,7 +24,7 @@ usersRouter.get(
 usersRouter.get(
   "/:userId",
   authenticateMiddleware,
-  usersControllers.getUserDetails
+  usersControllers.getUserDetailsController
 );
 
 usersRouter.patch(
