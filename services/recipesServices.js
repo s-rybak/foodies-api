@@ -87,7 +87,7 @@ export const getFavoriteRecipesByUserId = async (userId, pagination) => {
     where: { ownerId: userId },
     offset,
     limit: normalizedLimit,
-    order: [["id", "asc"]],
+    order: [["createdAt", "desc"]],
     include: [
       {
         model: Recipe,
