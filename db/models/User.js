@@ -1,13 +1,13 @@
-import { DataTypes } from "sequelize";
+import { DataTypes } from 'sequelize';
 
-import sequelize from "../sequelize.js";
-import { emailRegex } from "../../constants/constants.js";
+import sequelize from '../sequelize.js';
+import { emailRegex } from '../../constants/constants.js';
 
 /**
  * Sequelize model for User.
  */
 const User = sequelize.define(
-  "user",
+  'user',
   {
     id: {
       type: DataTypes.UUID,
