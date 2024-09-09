@@ -11,7 +11,6 @@ import HttpError from '../helpers/HttpError.js';
 import usersServices from '../services/usersServices.js';
 import fileServices from '../services/fileServices.js';
 
-
 /**
  * Controller to get user information.
  * It retrieves the user's information and includes followers and following details
@@ -90,9 +89,13 @@ const updateAvatar = async (req, res) => {
 // Get info followers of a user.
 
 const getFollowers = async (req, res, next) => {
+  const { page = 1, limit = 10 } = req.query;
   const { userId } = req.params;
   try {
-    const followers = await usersServices.getUserFollowing(userId);
+    const followers = await usersServices.getUserFollowers(userId, {
+      page,
+      limit,
+    });
 
     if (!followers || followers.length === 0) {
       throw HttpError(404, 'Followers not found');
@@ -107,9 +110,13 @@ const getFollowers = async (req, res, next) => {
 // Get info of user following .
 
 const getFollowing = async (req, res, next) => {
+  const { page = 1, limit = 10 } = req.query;
   const { userId } = req.user;
   try {
-    const usersFollowing = await usersServices.getUserFollowing(userId);
+    const usersFollowing = await usersServices.getUserFollowing(userId, {
+      page,
+      limit,
+    });
 
     if (!usersFollowing || usersFollowing.length === 0) {
       throw HttpError(404, 'User do not follow for others');

@@ -63,67 +63,104 @@ async function updateUser(id, data) {
   return rows ? updateReply?.dataValues : null;
 }
 
-async function getUserFollowers(userId) {
+async function getUserFollowers(userId, pagination = {}) {
+  const { page = 1, limit = 10 } = pagination;
+  const normalizedLimit = Number(limit);
+  const offset = (Number(page) - 1) * normalizedLimit;
+
   try {
-    const followers = await User.findAll({
+    const followers = await Follow.findAll({
+      where: { followedId: userId },
       include: [
         {
-          model: Follow,
-          as: 'Followers',
-          where: { followedId: userId },
-          attributes: [],
-        },
-        {
-          model: Recipe,
-          as: 'Recipes',
-          attributes: ['id'],
+          model: User,
+          as: 'UserFollower', 
+          attributes: ['id', 'name', 'avatar'],
+          include: [
+            {
+              model: Recipe,
+              as: 'Recipes', 
+              attributes: ['id'],
+            },
+          ],
         },
       ],
-      attributes: ['id', 'name', 'avatar'],
+      attributes: [],
+      offset,
+      limit: normalizedLimit,
     });
-    const result = followers.map(user => ({
-      id: user.id,
-      name: user.name,
-      avatar: user.avatar,
-      recipeCount: user.Recipes.length,
+
+    const followersCount = await Follow.count({
+      where: { followedId: userId },
+    });
+
+    const result = followers.map(follow => ({
+      id: follow.UserFollower.id,
+      name: follow.UserFollower.name,
+      avatar: follow.UserFollower.avatar,
+      recipeCount: follow.UserFollower.Recipes.length,
     }));
 
-    return result;
+    return {
+      followersCount,
+      users: result,
+      totalPages: Math.ceil(followersCount / normalizedLimit),
+      currentPage: page,
+    };
   } catch (error) {
     throw new Error(error.message);
   }
 }
-async function getUserFollowing(userId) {
+
+async function getUserFollowing(userId, pagination = {}) {
+  const { page = 1, limit = 10 } = pagination;
+  const normalizedLimit = Number(limit);
+  const offset = (Number(page) - 1) * normalizedLimit;
+
   try {
-    const following = await User.findAll({
+    const following = await Follow.findAll({
+      where: { followerId: userId },
       include: [
         {
-          model: Follow,
-          as: 'Following',
-          where: { followerId: userId },
-          attributes: [],
-        },
-        {
-          model: Recipe,
-          as: 'Recipes',
-          attributes: ['id'],
+          model: User,
+          as: 'UserFollowing', 
+          attributes: ['id', 'name', 'avatar'],
+          include: [
+            {
+              model: Recipe,
+              as: 'Recipes', 
+              attributes: ['id'],
+            },
+          ],
         },
       ],
-      attributes: ['id', 'name', 'avatar'],
+      attributes: [],
+      offset,
+      limit: normalizedLimit,
     });
 
-    const result = following.map(user => ({
-      id: user.id,
-      name: user.name,
-      avatar: user.avatar,
-      recipeCount: user.Recipes.length,
+    const followingCount = await Follow.count({
+      where: { followerId: userId },
+    });
+
+    const result = following.map(follow => ({
+      id: follow.UserFollowing.id,
+      name: follow.UserFollowing.name,
+      avatar: follow.UserFollowing.avatar,
+      recipeCount: follow.UserFollowing.Recipes.length,
     }));
 
-    return result;
+    return {
+      followingCount,
+      users: result,
+      totalPages: Math.ceil(followingCount / normalizedLimit),
+      currentPage: page,
+    };
   } catch (error) {
     throw new Error(error.message);
   }
 }
+
 
 export default {
   createUser,
