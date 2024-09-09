@@ -5,7 +5,6 @@ import User from '../db/models/User.js';
 import Follow from '../db/models/Follow.js';
 import Recipe from '../db/models/Recipe.js';
 import UserFavorite from "../db/models/UserFavorite.js";
-import HttpError from "../helpers/HttpError.js";
 
 /**
  * Registers a new user.
@@ -168,14 +167,15 @@ const getUserDetails = async (userId, authUserId) => {
     const user = await User.findOne({
         where: {id: userId},
     });
-    const createRecipeCount = await Recipe.count({owner: userId});
-    const followersUserCount = await Follow.count({
-        followerId: userId,
-    });
 
     if (!user) {
         return null;
     }
+
+    const createRecipeCount = await Recipe.count({owner: userId});
+    const followersUserCount = await Follow.count({
+        followerId: userId,
+    });
 
     if (userId === authUserId) {
         const countFavouriteRecipe = await UserFavorite.count({
