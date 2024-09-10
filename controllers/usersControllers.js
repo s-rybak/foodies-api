@@ -164,6 +164,36 @@ const getFollowing = async (req, res, next) => {
         next(error);
     }
 };
+// ветка follow-unfollow
+/**
+ * Контроллер для подписки на пользователя
+ */
+const followUser = async (req, res, next) => {
+  try {
+    const { userId } = req.params;
+    const { id: currentUserId } = req.user;
+
+    await usersServices.followUser(currentUserId, userId);
+    res.status(200).json({ message: `User ${userId} followed successfully` });
+  } catch (error) {
+    next(error);
+  }
+};
+
+/**
+ * Контроллер для отписки от пользователя
+ */
+const unfollowUser = async (req, res, next) => {
+  try {
+    const { userId } = req.params;
+    const { id: currentUserId } = req.user;
+
+    await usersServices.unfollowUser(currentUserId, userId);
+    res.status(200).json({ message: `User ${userId} unfollowed successfully` });
+  } catch (error) {
+    next(error);
+  }
+};
 
 export default {
     //getUserInfo: ctrlWrapper(getUserInfo),
@@ -172,4 +202,6 @@ export default {
     getFollowers: ctrlWrapper(getFollowers),
     getFollowing: ctrlWrapper(getFollowing),
     getUserDetailsController: ctrlWrapper(getUserDetailsController),
+    followUser: ctrlWrapper(followUser),
+    unfollowUser: ctrlWrapper(unfollowUser)
 };

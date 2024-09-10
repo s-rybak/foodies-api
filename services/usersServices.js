@@ -205,10 +205,38 @@ const getUserDetails = async (userId, authUserId) => {
     }
 };
 
+/**
+ * @param {string} currentUserId
+ * @param {string} userId
+ * @returns {Promise<Object>}
+ */
+const followUser = async (currentUserId, userId) => {
+    return await Follow.create({
+        followerId: currentUserId,
+        followedId: userId,
+    });
+};
+
+/**
+ * @param {string} currentUserId
+ * @param {string} userId
+ * @returns {Promise<number>}
+ */
+const unfollowUser = async (currentUserId, userId) => {
+    return await Follow.destroy({
+        where: {
+            followerId: currentUserId,
+            followedId: userId,
+        },
+    });
+};
+
 export default {
     createUser,
     getUser,
     updateUser,
+    followUser, // ветка follow-unfollow
+    unfollowUser, // ветка follow-unfollow
     getUserDetails,
     getUserFollowers,
     getUserFollowing,
