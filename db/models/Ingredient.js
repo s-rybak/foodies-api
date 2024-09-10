@@ -1,26 +1,33 @@
 import { DataTypes } from 'sequelize';
 import sequelize from '../sequelize.js';
+import Recipe from "./Recipe.js";
 
 const Ingredient = sequelize.define(
-  'Ingredients',
+  "ingredient",
   {
+    id: {
+      type: DataTypes.UUID,
+      defaultValue: DataTypes.UUIDV4,
+      allowNull: false,
+      primaryKey: true
+    },
     name: {
       type: DataTypes.STRING,
       allowNull: false,
     },
     desc: {
-      type: DataTypes.TEXT, 
-      allowNull: false, 
+      type: DataTypes.TEXT,
+      allowNull: false,
     },
     img: {
-      type: DataTypes.STRING, 
-      allowNull: false, 
+      type: DataTypes.STRING,
+      allowNull: false,
     },
   },
   {
-    timestamps: false, 
+    timestamps: false,
   }
 );
-// Ingredient.sync({ force: true });
+
 
 export default Ingredient;

@@ -1,10 +1,10 @@
-import HttpError from "./HttpError.js";
+import HttpError from "../helpers/HttpError.js";
 
-const validateQuery = (schema) => {
+const validateQuery = schema => {
   const func = (req, _, next) => {
     const { error } = schema.validate(req.query);
     if (error) {
-      next(HttpError(400, error.message));
+      return next(HttpError(400, error.message));
     }
     next();
   };
@@ -13,3 +13,4 @@ const validateQuery = (schema) => {
 };
 
 export default validateQuery;
+

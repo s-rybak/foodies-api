@@ -1,9 +1,15 @@
-import { DataTypes } from 'sequelize';
-import sequelize from '../sequelize.js';
+import { DataTypes } from "sequelize";
+import sequelize from "../sequelize.js";
 
 const Category = sequelize.define(
-  'Categories',
+  "category",
   {
+    id: {
+      type: DataTypes.UUID,
+      defaultValue: DataTypes.UUIDV4,
+      allowNull: false,
+      primaryKey: true
+    },
     name: {
       type: DataTypes.STRING,
       allowNull: false,
@@ -13,6 +19,7 @@ const Category = sequelize.define(
     timestamps: false,
   }
 );
+
 // Category.sync({ force: true });
 
 export default Category;
