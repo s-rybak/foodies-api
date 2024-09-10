@@ -1,6 +1,4 @@
-const { MAILER_FROM_NAME, MAILER_FROM_EMAIL } = process.env;
-
-const { BASE_URL } = process.env;
+const { BASE_URL, MAILER_FROM_NAME, MAILER_FROM_EMAIL } = process.env;
 
 /**
  * Generates HTML markup for an email confirmation message.

@@ -1,13 +1,13 @@
-import { DataTypes } from "sequelize";
+import { DataTypes } from 'sequelize';
 
-import sequelize from "../sequelize.js";
-import { emailRegex } from "../../constants/constants.js";
+import sequelize from '../sequelize.js';
+import { emailRegex } from '../../constants/constants.js';
 
 /**
  * Sequelize model for User.
  */
 const User = sequelize.define(
-  "user",
+  'user',
   {
     id: {
       type: DataTypes.UUID,
@@ -56,13 +56,17 @@ const User = sequelize.define(
     },
     avatar: {
       type: DataTypes.STRING,
+      defaultValue: null,
+      validate: {
+        notEmpty: true,
+      },
     },
   },
   {
     hooks: {
-      afterFind: result => {
+      afterFind: (result) => {
         if (Array.isArray(result)) {
-          result.forEach(record => {
+          result.forEach((record) => {
             delete record.dataValues.updatedAt;
             delete record.dataValues.createdAt;
           });
@@ -71,15 +75,15 @@ const User = sequelize.define(
           delete result.dataValues.createdAt;
         }
       },
-      afterCreate: record => {
+      afterCreate: (record) => {
         delete record.dataValues.updatedAt;
         delete record.dataValues.createdAt;
       },
-      afterUpdate: record => {
+      afterUpdate: (record) => {
         delete record.dataValues.updatedAt;
         delete record.dataValues.createdAt;
       },
-      afterDestroy: record => {
+      afterDestroy: (record) => {
         delete record.dataValues.updatedAt;
         delete record.dataValues.createdAt;
       },
@@ -87,6 +91,6 @@ const User = sequelize.define(
   }
 );
 
-// User.sync({ force: true });
+//User.sync({ force: true });
 
 export default User;

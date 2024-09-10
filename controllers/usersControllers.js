@@ -1,18 +1,16 @@
-import * as fs from "node:fs/promises";
-import path from "node:path";
+import * as fs from 'node:fs/promises';
+import path from 'node:path';
 
 import {
-  defaultAvatarFileName,
-  defaultPublicFolderName,
-  defaultRelAvatarFolderPath,
-} from "../constants/constants.js";
-import ctrlWrapper from "../helpers/ctrlWrapper.js";
-import usersServices from "../services/usersServices.js";
+    defaultAvatarFileName,
+    avatarsFolderRelPath,
+} from '../constants/constants.js';
+import ctrlWrapper from '../decorators/ctrlWrapper.js';
+import HttpError from '../helpers/HttpError.js';
 
-const avatarsFolderAbsPath = path.resolve(
-  defaultPublicFolderName,
-  ...defaultRelAvatarFolderPath
-);
+import usersServices from '../services/usersServices.js';
+import fileServices from '../services/fileServices.js';
+import Follow from "../db/models/Follow.js";
 
 /**
  * Controller to get user information.
@@ -23,7 +21,7 @@ const avatarsFolderAbsPath = path.resolve(
  * @param {Object} res Express response object.
  * @param {Function} next Express next middleware function.
  */
-const getUserInfo = (req, res, next) => {
+/*const getUserInfo = (req, res) => {
   const { id, name, email, avatar, followers = [], following = [] } = req.user;
 
   const user = {
@@ -40,22 +38,58 @@ const getUserInfo = (req, res, next) => {
 
   res.json(user);
 };
+*/
+
+// controllers/userController.js
+
+//const { getUserDetails } = require("../services/userService");
+
+/**
+ * Controller to get user details.
+ *
+ * @param {Object} req - Express request object. Must include `userId` parameter and authenticated user data.
+ * @param {Object} res - Express response object. Sends a JSON response with user details.
+ *
+ * @returns {void}
+ */
+const getUserDetailsController = async (req, res) => {
+    try {
+        const userId = req.params.userId;
+        const authUserId = req.user.id;
+        const userDetails = await usersServices.getUserDetails(userId, authUserId);
+        if (!userDetails) {
+            return res.status(404).json({message: "User not found"});
+        }
+        return res.json(userDetails);
+    } catch (error) {
+        return res.status(500).json({message: "Server Error"});
+    }
+};
 
 /**
  * Controller to get the currently authenticated user's information.
- * It retrieves and sends the current user's ID, name, email, and avatar.
+ * It retrieves and sends the current user's ID, name, email, avatar followers, and following.
  *
  * @param {Object} req Express request object.
  * @param {Object} res Express response object.
  */
-const getCurrentUser = (req, res) => {
-  const { id, name, email, avatar } = req.user;
-  res.json({
-    id,
-    name,
-    email,
-    avatar,
-  });
+const getCurrentUser = async (req, res) => {
+    try {
+        const {id, name, email, avatar} = req.user;
+        const followersCount = await Follow.count({followingId: id});
+        const followingCount = await Follow.count({followerId: id});
+
+        res.json({
+            id,
+            name,
+            email,
+            avatar,
+            followersCount,
+            followingCount,
+        });
+    } catch (error) {
+        return res.status(500).json({message: "Server Error"});
+    }
 };
 
 /**
@@ -71,56 +105,64 @@ const getCurrentUser = (req, res) => {
  * @throws {Error} Throws an error if there is an issue moving the file or updating the user record.
  */
 const updateAvatar = async (req, res) => {
-  // Move avatar file from `temp` folder to `avatars` folder
-  const { path: oldAbsTempPath, filename } = req.file;
-  const newAbsAvatarPath = path.join(avatarsFolderAbsPath, filename);
-  await fs.rename(oldAbsTempPath, newAbsAvatarPath);
+    // Move file from 'temp' to avatar folder and rename the file
+    const newAvatarRelPath = await fileServices.saveFileToServerFileSystem(
+        req.file,
+        avatarsFolderRelPath,
+        'avatar',
+        req.user.avatar,
+        defaultAvatarFileName
+    );
 
-  // Obtain old user avatar absolute path for future deletion
-  const oldAvatarAbsPath = path.resolve(
-    defaultPublicFolderName,
-    req.user.avatar
-  );
+    // Update user with new avatar relative path
+    const {avatar} = await usersServices.updateUser(req.user.id, {
+        avatar: newAvatarRelPath,
+    });
 
-  // Update user with new avatar relative path
-  const newRelPath = path.join(...defaultRelAvatarFolderPath, filename);
-  const { avatar } = await usersServices.updateUser(req.user.id, {
-    avatar: newRelPath,
-  });
+    // Sent response with updated avatar URL data
+    res.json({avatar});
+};
 
-  // Clean-up - remove old user avatar file if not default avatar
-  const defaultAbsAvatarPath = path.resolve(
-    defaultPublicFolderName,
-    ...defaultRelAvatarFolderPath,
-    defaultAvatarFileName
-  );
-  if (oldAvatarAbsPath !== defaultAbsAvatarPath) {
-    // Attempt to delete the old avatar file.
-    // Full error handling is implemented to ensure that the process continues
-    // even if an error occurs during the file deletion.
+// Get info followers of a user.
+
+const getFollowers = async (req, res, next) => {
+    const {page = 1, limit = 10} = req.query;
+    const {userId} = req.params;
     try {
-      // Check if the old avatar file exists or throw an error
-      await fs.access(oldAvatarAbsPath);
-      // File exists, so attempt to delete it
-      await fs.unlink(oldAvatarAbsPath);
-    } catch (error) {
-      if (error.code === "ENOENT") {
-        // File does not exist
-        console.error("File not found");
-      } else if (error.code === "EACCES") {
-        // Permission denied
-        console.error("Permission denied");
-      } else {
-        // Other errors
-        console.error(`Error deleting file: ${error.message}`);
-      }
-    }
-  }
+        const followers = await usersServices.getUserFollowers(userId, {
+            page,
+            limit,
+        });
 
-  // Sent response with updated avatar URL data
-  res.json({
-    avatar: avatar,
-  });
+        if (!followers || followers.length === 0) {
+            throw HttpError(404, 'Followers not found');
+        }
+
+        res.status(200).json({followers});
+    } catch (error) {
+        next(error);
+    }
+};
+
+// Get info of user following .
+
+const getFollowing = async (req, res, next) => {
+    const {page = 1, limit = 10} = req.query;
+    const {userId} = req.params;
+    try {
+        const usersFollowing = await usersServices.getUserFollowing(userId, {
+            page,
+            limit,
+        });
+
+        if (!usersFollowing || usersFollowing.length === 0) {
+            throw HttpError(404, 'User do not follow for others');
+        }
+
+        res.status(200).json({usersFollowing});
+    } catch (error) {
+        next(error);
+    }
 };
 // ветка follow-unfollow
 /**
@@ -154,9 +196,12 @@ const unfollowUser = async (req, res, next) => {
 };
 
 export default {
-  getUserInfo: ctrlWrapper(getUserInfo),
-  getCurrentUser: ctrlWrapper(getCurrentUser),
-  updateAvatar: ctrlWrapper(updateAvatar),
-  followUser, // Подписка // ветка follow-unfollow
-  unfollowUser, // Отписка // ветка follow-unfollow
+    //getUserInfo: ctrlWrapper(getUserInfo),
+    getCurrentUser: ctrlWrapper(getCurrentUser),
+    updateAvatar: ctrlWrapper(updateAvatar),
+    getFollowers: ctrlWrapper(getFollowers),
+    getFollowing: ctrlWrapper(getFollowing),
+    getUserDetailsController: ctrlWrapper(getUserDetailsController),
+    followUser: ctrlWrapper(followUser),
+    unfollowUser: ctrlWrapper(unfollowUser)
 };

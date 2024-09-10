@@ -38,11 +38,11 @@ const sendEmail = data => {
       {
         filename: "logo.png",
         path: path.resolve(defaultPublicFolderName, "logo.png"),
-        cid: "logo@foodies-api", //my mistake was putting "cid:logo@cid" here!
+        cid: "logo@foodies-api",
       },
     ],
   };
   return transporter.sendMail(emailOptions);
 };
 
-export default sendEmail;
+export default { sendEmail };

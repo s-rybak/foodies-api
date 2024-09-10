@@ -3,19 +3,23 @@ import express from "express";
 import morgan from "morgan";
 import cors from "cors";
 
+import {
+  defaultPublicFolderName,
+  imagesAllowedExtensions,
+} from "./constants/constants.js";
+
+import recipesRouter from "./routes/recipesRouter.js";
 import sequelize from "./db/sequelize.js";
+import authRouter from "./routes/authRouter.js";
+import usersRouter from "./routes/usersRouter.js";
 import categoriesRouter from "./routes/categoriesRouter.js";
 import ingredientsRouter from "./routes/ingredientsRouter.js";
 import areasRouter from "./routes/areasRouter.js";
-import followRouter from "./routes/followRouter.js"; // ветка follow-unfollow
-import authRouter from "./routes/authRouter.js";
-import {
-  avatarAllowedExtensions,
-  defaultPublicFolderName,
-} from "./constants/constants.js";
-import usersRouter from "./routes/usersRouter.js";
+import followRouter from "./routes/followRouter.js";
+import './db/models/associations.js';
 
 const WEB_SERVER_PORT = Number(process.env.PORT) || 3000;
+
 
 const app = express();
 
@@ -25,9 +29,11 @@ app.use(express.json());
 
 app.use(
   express.static(defaultPublicFolderName, {
-    extensions: [...avatarAllowedExtensions],
+    extensions: [...imagesAllowedExtensions],
   })
 );
+
+app.use("/api/recipes", recipesRouter);
 
 app.use("/api/status", (_, res) => {
   res.json({ status: "OK" });
@@ -39,6 +45,11 @@ app.use("/api/areas", areasRouter);
 app.use("/api/follow", followRouter); // ветка follow-unfollow
 app.use("/api/auth", authRouter);
 app.use("/api/users", usersRouter);
+
+app.use("/api/categories", categoriesRouter);
+app.use("/api/ingredients", ingredientsRouter);
+app.use("/api/areas", areasRouter);
+app.use("/api/recipes", recipesRouter);
 
 app.use((_, res) => {
   res.status(404).json({ message: "Route not found" });
@@ -54,6 +65,7 @@ try {
     "Application started. Establishing connection to the database..."
   );
   await sequelize.authenticate();
+  // await sequelize.sync()
   console.log("Database connection successful");
   app.listen(WEB_SERVER_PORT, () => {
     console.log(`Server is running. Use our API on port: ${WEB_SERVER_PORT}`);

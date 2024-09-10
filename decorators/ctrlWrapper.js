@@ -1,7 +1,7 @@
 import { ValidationError } from "sequelize";
-import HttpError from "./HttpError.js";
+import HttpError from "../helpers/HttpError.js";
 
-const ctrlWrapper = (controller) => {
+const ctrlWrapper = controller => {
   return async (req, res, next) => {
     try {
       await controller(req, res, next);

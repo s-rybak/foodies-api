@@ -1,47 +1,36 @@
-import bcrypt from "bcrypt";
-import path from "node:path";
-import { v4 as uuidv4 } from "uuid";
+import bcrypt from 'bcrypt';
+import {v4 as uuidv4} from 'uuid';
 
-import User from "../db/models/User.js";
-import Follow from "../db/models/Follow.js";
-import {
-  defaultAvatarFileName,
-  defaultRelAvatarFolderPath,
-} from "../constants/constants.js";
+import User from '../db/models/User.js';
+import Follow from '../db/models/Follow.js';
+import Recipe from '../db/models/Recipe.js';
+import UserFavorite from "../db/models/UserFavorite.js";
 
 /**
  * Registers a new user.
  *
  * @param {Object} data The data for creating a new user.
- * @param {string} data.name The name of the user.
- * @param {string} data.email The email of the user.
- * @param {string} data.password The password of the user.
  * @returns {<Object>} The created user data.
  * @throws {Error} If the email is already in use or other Sequelize errors occur.
  */
 async function createUser(data) {
-  try {
-    const hashPassword = await bcrypt.hash(data.password, 10);
-    const verificationToken = uuidv4();
-    const avatarURL = path.join(
-      ...defaultRelAvatarFolderPath,
-      defaultAvatarFileName
-    );
+    try {
+        const hashedPassword = await bcrypt.hash(data.password, 10);
+        const verificationToken = uuidv4();
 
-    const registeredUser = await User.create({
-      ...data,
-      password: hashPassword,
-      avatar: avatarURL,
-      verificationToken,
-    });
+        const reply = await User.create({
+            ...data,
+            password: hashedPassword,
+            verificationToken,
+        });
 
-    return registeredUser.dataValues;
-  } catch (error) {
-    if (error.name === "SequelizeUniqueConstraintError") {
-      error.message = "Email in use";
+        return reply?.dataValues;
+    } catch (error) {
+        if (error.name === 'SequelizeUniqueConstraintError') {
+            error.message = 'Email in use';
+        }
+        throw error;
     }
-    throw error;
-  }
 }
 
 /**
@@ -49,20 +38,13 @@ async function createUser(data) {
  *
  * @param {Object} query The query to find the user.
  * @returns {<Object|null>} The user data if found, or null if not found.
- * @throws {Error} If an error occurs while retrieving the user.
  */
 async function getUser(query) {
-  let user;
-  try {
-    const result = await User.findOne({
-      where: { ...query },
+    const reply = await User.findOne({
+        where: {...query},
     });
-    user = result?.dataValues;
-  } catch (error) {
-    error.message = `Failed to retrieve user: ${error.message}`;
-    throw error;
-  }
-  return user || null;
+
+    return reply?.dataValues || null;
 }
 
 /**
@@ -74,30 +56,154 @@ async function getUser(query) {
  * @throws {Error} If an error occurs while updating the user or the update is not effective.
  */
 async function updateUser(id, data) {
-  let affectedRows;
-  try {
-    [affectedRows] = await User.update(data, { where: { id } });
-  } catch (error) {
-    error.message = `Error: while updating user with ID '${id}': ${error.message}`;
-    throw error;
-  }
-  const updatedUser = await getUser({ id });
-  if (!affectedRows && updatedUser) {
-    throw HttpError(
-      400,
-      "Nothing to update or update was not effective while updating user"
-    );
-  }
-  if (!updatedUser) {
-    return null;
-  }
-  return updatedUser;
+    const [rows, [updateReply]] = await User.update(data, {
+        where: {id},
+        returning: true,
+    });
+
+    return rows ? updateReply?.dataValues : null;
 }
-/**
- * ======================================
- * // ветка follow-unfollow ..
- * ======================================
- */
+
+async function getUserFollowers(userId, pagination = {}) {
+    const {page = 1, limit = 10} = pagination;
+    const normalizedLimit = Number(limit);
+    const offset = (Number(page) - 1) * normalizedLimit;
+
+    try {
+        const followers = await Follow.findAll({
+            where: {followedId: userId},
+            include: [
+                {
+                    model: User,
+                    as: 'follower',
+                    attributes: ['id', 'name', 'avatar'],
+                    include: [
+                        {
+                            model: Recipe,
+                            as: 'recipes',
+                            attributes: ['id'],
+                        },
+                    ],
+                },
+            ],
+            attributes: [],
+            offset,
+            limit: normalizedLimit,
+        });
+
+        const followersCount = await Follow.count({
+            where: {followedId: userId},
+        });
+
+        const result = followers.map(follow => ({
+            id: follow.follower.id,
+            name: follow.follower.name,
+            avatar: follow.follower.avatar,
+            recipeCount: follow.follower.recipes.length,
+        }));
+
+        return {
+            followersCount,
+            users: result,
+            totalPages: Math.ceil(followersCount / normalizedLimit),
+            currentPage: page,
+        };
+    } catch (error) {
+        throw new Error(error.message);
+    }
+}
+
+async function getUserFollowing(userId, pagination = {}) {
+    const {page = 1, limit = 10} = pagination;
+    const normalizedLimit = Number(limit);
+    const offset = (Number(page) - 1) * normalizedLimit;
+
+    try {
+        const following = await Follow.findAll({
+            where: {'$follow.followerId$': userId},
+            include: [
+                {
+                    model: User,
+                    as: 'followed',
+                    attributes: ['id', 'name', 'avatar'],
+                    include: [
+                        {
+                            model: Recipe,
+                            as: 'recipes',
+                            attributes: ['id'],
+                        },
+                    ],
+                },
+            ],
+            attributes: ['followerId', 'followedId'],
+            offset,
+            limit: normalizedLimit,
+        });
+
+        const followingCount = await Follow.count({
+            where: {followerId: userId},
+        });
+
+        const result = following.map(follow => ({
+            id: follow.followed.id,
+            name: follow.followed.name,
+            avatar: follow.followed.avatar,
+            recipeCount: follow.followed.recipes.length,
+        }));
+
+        return {
+            followingCount,
+            users: result,
+            totalPages: Math.ceil(followingCount / normalizedLimit),
+            currentPage: page,
+        };
+    } catch (error) {
+        throw new Error(error.message);
+    }
+}
+
+
+const getUserDetails = async (userId, authUserId) => {
+    const user = await User.findOne({
+        where: {id: userId},
+    });
+
+    if (!user) {
+        return null;
+    }
+
+    const createRecipeCount = await Recipe.count({owner: userId});
+    const followersUserCount = await Follow.count({
+        followerId: userId,
+    });
+
+    if (userId === authUserId) {
+        const countFavouriteRecipe = await UserFavorite.count({
+            ownerId: authUserId,
+        });
+        const followingUsersCount = await Follow.count({
+            followingId: authUserId,
+        });
+
+        return {
+            avatar: user.avatar,
+            name: user.name,
+            email: user.email,
+            createRecipeCount,
+            countFavouriteRecipe,
+            followingUsersCount,
+            followersUserCount,
+        };
+    } else {
+        return {
+            avatar: user.avatar,
+            name: user.name,
+            email: user.email,
+            createRecipeCount,
+            followersUserCount,
+        };
+    }
+};
 
 /**
  * @param {string} currentUserId
@@ -105,10 +211,10 @@ async function updateUser(id, data) {
  * @returns {Promise<Object>}
  */
 const followUser = async (currentUserId, userId) => {
-  return await Follow.create({
-    followerId: currentUserId,
-    followingId: userId,
-  });
+    return await Follow.create({
+        followerId: currentUserId,
+        followingId: userId,
+    });
 };
 
 /**
@@ -117,18 +223,21 @@ const followUser = async (currentUserId, userId) => {
  * @returns {Promise<number>}
  */
 const unfollowUser = async (currentUserId, userId) => {
-  return await Follow.destroy({
-    where: {
-      followerId: currentUserId,
-      followingId: userId,
-    },
-  });
+    return await Follow.destroy({
+        where: {
+            followerId: currentUserId,
+            followingId: userId,
+        },
+    });
 };
 
 export default {
-  createUser,
-  getUser,
-  updateUser,
-  followUser, // ветка follow-unfollow
-  unfollowUser, // ветка follow-unfollow
+    createUser,
+    getUser,
+    updateUser,
+    followUser, // ветка follow-unfollow
+    unfollowUser, // ветка follow-unfollow
+    getUserDetails,
+    getUserFollowers,
+    getUserFollowing,
 };
