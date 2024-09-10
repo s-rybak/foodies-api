@@ -15,6 +15,7 @@ import usersRouter from "./routes/usersRouter.js";
 import categoriesRouter from "./routes/categoriesRouter.js";
 import ingredientsRouter from "./routes/ingredientsRouter.js";
 import areasRouter from "./routes/areasRouter.js";
+import './db/models/associations.js';
 
 const WEB_SERVER_PORT = Number(process.env.PORT) || 3000;
 
@@ -31,6 +32,7 @@ app.use(
   })
 );
 
+app.use("/api/recipes", recipesRouter);
 
 app.use("/api/status", (_, res) => {
   res.json({ status: "OK" });

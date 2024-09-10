@@ -1,9 +1,10 @@
-import {DataTypes} from "sequelize";
+import { DataTypes } from "sequelize";
 import sequelize from "../sequelize.js";
 import Category from "./Category.js";
 import Ingredient from "./Ingredient.js";
 import User from "./User.js";
 import Area from "./Area.js";
+import UserFavorite from "./UserFavorite.js";
 
 const Recipe = sequelize.define("recipe", {
     id: {
@@ -57,7 +58,7 @@ const Recipe = sequelize.define("recipe", {
         }
     }
 }, {
-    timestamps: true // Sequelize автоматически добавляет createdAt и updatedAt
+    timestamps: true
 });
 
 Recipe.belongsTo(Area, {
@@ -72,14 +73,19 @@ Recipe.belongsTo(Category, {
     foreignKey: 'categoryId'
 });
 
+Recipe.hasMany(UserFavorite, {
+    foreignKey: 'recipeId',
+    as: 'userFavorites'
+});
+
 User.hasMany(Recipe, {
     foreignKey: 'ownerId',
     as: 'recipes'
 });
 
-Recipe.belongsToMany(Ingredient, {through: 'recipe_ingredients'});
+Recipe.belongsToMany(Ingredient, { through: 'recipe_ingredients' });
 
-Ingredient.belongsToMany(Recipe, {through: 'recipe_ingredients'});
+Ingredient.belongsToMany(Recipe, { through: 'recipe_ingredients' });
 
 Category.hasMany(Recipe, {
     foreignKey: 'categoryId'
