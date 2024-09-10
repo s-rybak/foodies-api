@@ -7,14 +7,14 @@ const followRouter = Router();
 
 // Добавить пользователя в список подписок
 followRouter.post(
-  "/follow/:userId",
+  "/:userId/follow",
   authenticateMiddleware,
   usersControllers.followUser
 );
 
 // Удалить пользователя из списка подписок
 followRouter.delete(
-  "/unfollow/:userId",
+  "/:userId/follow",
   authenticateMiddleware,
   usersControllers.unfollowUser
 );

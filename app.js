@@ -42,7 +42,7 @@ app.use("/api/status", (_, res) => {
 app.use("/api/categories", categoriesRouter);
 app.use("/api/ingredients", ingredientsRouter);
 app.use("/api/areas", areasRouter);
-app.use("/api/follow", followRouter); // ветка follow-unfollow
+app.use("/api/users", followRouter); // ветка follow-unfollow
 app.use("/api/auth", authRouter);
 app.use("/api/users", usersRouter);
 

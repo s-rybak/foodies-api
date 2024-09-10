@@ -213,7 +213,7 @@ const getUserDetails = async (userId, authUserId) => {
 const followUser = async (currentUserId, userId) => {
     return await Follow.create({
         followerId: currentUserId,
-        followingId: userId,
+        followedId: userId,
     });
 };
 
@@ -226,7 +226,7 @@ const unfollowUser = async (currentUserId, userId) => {
     return await Follow.destroy({
         where: {
             followerId: currentUserId,
-            followingId: userId,
+            followedId: userId,
         },
     });
 };
