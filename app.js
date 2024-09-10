@@ -3,11 +3,6 @@ import express from "express";
 import morgan from "morgan";
 import cors from "cors";
 
-import "dotenv/config";
-import express from "express";
-import morgan from "morgan";
-import cors from "cors";
-
 import {
 	defaultPublicFolderName,
 	imagesAllowedExtensions,
@@ -19,8 +14,6 @@ import categoriesRouter from "./routes/categoriesRouter.js";
 import ingredientsRouter from "./routes/ingredientsRouter.js";
 import authRouter from "./routes/authRouter.js";
 import usersRouter from "./routes/usersRouter.js";
-import categoriesRouter from "./routes/categoriesRouter.js";
-import ingredientsRouter from "./routes/ingredientsRouter.js";
 import areasRouter from "./routes/areasRouter.js";
 import testimonialsRouter from "./routes/testimonials.js";
 import followRouter from "./routes/followRouter.js";
@@ -31,7 +24,6 @@ const WEB_SERVER_PORT = Number(process.env.PORT) || 3000;
 const app = express();
 
 app.use(morgan("tiny"));
-app.use(morgan("tiny"));
 app.use(cors());
 app.use(express.json());
 
@@ -41,15 +33,9 @@ app.use("/api/status", (_, res) => {
 
 app.use("/api/categories", categoriesRouter);
 app.use("/api/ingredients", ingredientsRouter);
-app.use("/api/categories", categoriesRouter);
-app.use("/api/ingredients", ingredientsRouter);
-app.use("/api/areas", areasRouter);
 app.use("/api/users", followRouter); // ветка follow-unfollow
 app.use("/api/auth", authRouter);
 app.use("/api/users", usersRouter);
-
-app.use("/api/categories", categoriesRouter);
-app.use("/api/ingredients", ingredientsRouter);
 app.use("/api/areas", areasRouter);
 app.use("/api/testimonials", testimonialsRouter);
 app.use("/api/recipes", recipesRouter);
