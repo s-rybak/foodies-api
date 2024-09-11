@@ -42,26 +42,7 @@ export const saveFileToServerFileSystem = async (
       defaultFileName
     );
     if (oldAbsPath && oldAbsPath !== defaultAbsPath) {
-      // Attempt to delete the old file.
-      // Full error handling is implemented to ensure that the process continues
-      // even if an error occurs during the file deletion.
-      try {
-        // Check if the old file exists or throw an error
-        await fs.access(oldAbsPath);
-        // File exists, so attempt to delete it
-        await fs.unlink(oldAbsPath);
-      } catch (error) {
-        if (error.code === "ENOENT") {
-          // File does not exist
-          console.error("File not found");
-        } else if (error.code === "EACCES") {
-          // Permission denied
-          console.error("Permission denied");
-        } else {
-          // Other errors
-          console.error(`Error deleting file: ${error.message}`);
-        }
-      }
+      removeFile(oldAbsPath);
     }
   }
 
@@ -71,6 +52,44 @@ export const saveFileToServerFileSystem = async (
   );
 
   return newRelPath;
+};
+
+/**
+ * Removes a file at the given path.
+ *
+ * This function attempts to delete the specified file. If the file does not
+ * exist, it logs an error and continues. If there are any permission issues
+ * or other errors, it logs appropriate error messages. Returns true if the
+ * file is successfully deleted, otherwise returns false.
+ *
+ * @param {string} path - The path to the file to be deleted.
+ * @returns {boolean} true if the file is deleted, otherwise false.
+ */
+export const removeFile = async path => {
+  // Attempt to delete the old file.
+  // Full error handling is implemented to ensure that the process continues
+  // even if an error occurs during the file deletion.
+  try {
+    // Check if file exists
+    await fs.access(path);
+    // Delete file
+    await fs.unlink(path);
+
+    return true;
+  } catch (error) {
+    if (error.code === "ENOENT") {
+      // File does not exist
+      console.error("File to delete not found");
+    } else if (error.code === "EACCES") {
+      // Permission denied
+      console.error("Permission denied while deleting file");
+    } else {
+      // Other errors
+      console.error(`Error deleting file: ${error.message}`);
+    }
+
+    return false;
+  }
 };
 
 export default { saveFileToServerFileSystem };
