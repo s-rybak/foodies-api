@@ -186,6 +186,7 @@ const getUserDetails = async (userId, authUserId) => {
         });
 
         return {
+            id: user.id,
             avatar: user.avatar,
             name: user.name,
             email: user.email,
@@ -196,6 +197,7 @@ const getUserDetails = async (userId, authUserId) => {
         };
     } else {
         return {
+            id: user.id,
             avatar: user.avatar,
             name: user.name,
             email: user.email,
