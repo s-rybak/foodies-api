@@ -1,15 +1,12 @@
-import * as fs from 'node:fs/promises';
-import path from 'node:path';
-
 import {
-    defaultAvatarFileName,
-    avatarsFolderRelPath,
-} from '../constants/constants.js';
-import ctrlWrapper from '../decorators/ctrlWrapper.js';
-import HttpError from '../helpers/HttpError.js';
+  defaultAvatarFileName,
+  avatarsFolderRelPath,
+} from "../constants/constants.js";
+import ctrlWrapper from "../decorators/ctrlWrapper.js";
+import HttpError from "../helpers/HttpError.js";
 
-import usersServices from '../services/usersServices.js';
-import fileServices from '../services/fileServices.js';
+import usersServices from "../services/usersServices.js";
+import fileServices from "../services/fileServices.js";
 import Follow from "../db/models/Follow.js";
 
 /**
@@ -53,17 +50,17 @@ import Follow from "../db/models/Follow.js";
  * @returns {void}
  */
 const getUserDetailsController = async (req, res) => {
-    try {
-        const userId = req.params.userId;
-        const authUserId = req.user.id;
-        const userDetails = await usersServices.getUserDetails(userId, authUserId);
-        if (!userDetails) {
-            return res.status(404).json({message: "User not found"});
-        }
-        return res.json(userDetails);
-    } catch (error) {
-        return res.status(500).json({message: "Server Error"});
+  try {
+    const userId = req.params.userId;
+    const authUserId = req.user.id;
+    const userDetails = await usersServices.getUserDetails(userId, authUserId);
+    if (!userDetails) {
+      return res.status(404).json({ message: "User not found" });
     }
+    return res.json(userDetails);
+  } catch (error) {
+    return res.status(500).json({ message: "Server Error" });
+  }
 };
 
 /**
@@ -74,22 +71,22 @@ const getUserDetailsController = async (req, res) => {
  * @param {Object} res Express response object.
  */
 const getCurrentUser = async (req, res) => {
-    try {
-        const {id, name, email, avatar} = req.user;
-        const followersCount = await Follow.count({followingId: id});
-        const followingCount = await Follow.count({followerId: id});
+  try {
+    const { id, name, email, avatar } = req.user;
+    const followersCount = await Follow.count({ followingId: id });
+    const followingCount = await Follow.count({ followerId: id });
 
-        res.json({
-            id,
-            name,
-            email,
-            avatar,
-            followersCount,
-            followingCount,
-        });
-    } catch (error) {
-        return res.status(500).json({message: "Server Error"});
-    }
+    res.json({
+      id,
+      name,
+      email,
+      avatar,
+      followersCount,
+      followingCount,
+    });
+  } catch (error) {
+    return res.status(500).json({ message: "Server Error" });
+  }
 };
 
 /**
@@ -105,64 +102,64 @@ const getCurrentUser = async (req, res) => {
  * @throws {Error} Throws an error if there is an issue moving the file or updating the user record.
  */
 const updateAvatar = async (req, res) => {
-    // Move file from 'temp' to avatar folder and rename the file
-    const newAvatarRelPath = await fileServices.saveFileToServerFileSystem(
-        req.file,
-        avatarsFolderRelPath,
-        'avatar',
-        req.user.avatar,
-        defaultAvatarFileName
-    );
+  // Move file from 'temp' to avatar folder and rename the file
+  const newAvatarRelPath = await fileServices.saveFileToServerFileSystem(
+    req.file,
+    avatarsFolderRelPath,
+    "avatar",
+    req.user.avatar,
+    defaultAvatarFileName
+  );
 
-    // Update user with new avatar relative path
-    const {avatar} = await usersServices.updateUser(req.user.id, {
-        avatar: newAvatarRelPath,
-    });
+  // Update user with new avatar relative path
+  const { avatar } = await usersServices.updateUser(req.user.id, {
+    avatar: newAvatarRelPath,
+  });
 
-    // Sent response with updated avatar URL data
-    res.json({avatar});
+  // Sent response with updated avatar URL data
+  res.json({ avatar });
 };
 
 // Get info followers of a user.
 
 const getFollowers = async (req, res, next) => {
-    const {page = 1, limit = 10} = req.query;
-    const {userId} = req.params;
-    try {
-        const followers = await usersServices.getUserFollowers(userId, {
-            page,
-            limit,
-        });
+  const { page = 1, limit = 10 } = req.query;
+  const { userId } = req.params;
+  try {
+    const followers = await usersServices.getUserFollowers(userId, {
+      page,
+      limit,
+    });
 
-        if (!followers || followers.length === 0) {
-            throw HttpError(404, 'Followers not found');
-        }
-
-        res.status(200).json({followers});
-    } catch (error) {
-        next(error);
+    if (!followers || followers.length === 0) {
+      throw HttpError(404, "Followers not found");
     }
+
+    res.status(200).json({ followers });
+  } catch (error) {
+    next(error);
+  }
 };
 
 // Get info of user following .
 
 const getFollowing = async (req, res, next) => {
-    const {page = 1, limit = 10} = req.query;
-    const {userId} = req.params;
-    try {
-        const usersFollowing = await usersServices.getUserFollowing(userId, {
-            page,
-            limit,
-        });
+  const { page = 1, limit = 10 } = req.query;
+  const { userId } = req.params;
+  try {
+    const usersFollowing = await usersServices.getUserFollowing(userId, {
+      page,
+      limit,
+    });
 
-        if (!usersFollowing || usersFollowing.length === 0) {
-            throw HttpError(404, 'User do not follow for others');
-        }
-
-        res.status(200).json({usersFollowing});
-    } catch (error) {
-        next(error);
+    if (!usersFollowing || usersFollowing.length === 0) {
+      throw HttpError(404, "User do not follow for others");
     }
+
+    res.status(200).json({ usersFollowing });
+  } catch (error) {
+    next(error);
+  }
 };
 // ветка follow-unfollow
 /**
@@ -196,12 +193,12 @@ const unfollowUser = async (req, res, next) => {
 };
 
 export default {
-    //getUserInfo: ctrlWrapper(getUserInfo),
-    getCurrentUser: ctrlWrapper(getCurrentUser),
-    updateAvatar: ctrlWrapper(updateAvatar),
-    getFollowers: ctrlWrapper(getFollowers),
-    getFollowing: ctrlWrapper(getFollowing),
-    getUserDetailsController: ctrlWrapper(getUserDetailsController),
-    followUser: ctrlWrapper(followUser),
-    unfollowUser: ctrlWrapper(unfollowUser)
+  //getUserInfo: ctrlWrapper(getUserInfo),
+  getCurrentUser: ctrlWrapper(getCurrentUser),
+  updateAvatar: ctrlWrapper(updateAvatar),
+  getFollowers: ctrlWrapper(getFollowers),
+  getFollowing: ctrlWrapper(getFollowing),
+  getUserDetailsController: ctrlWrapper(getUserDetailsController),
+  followUser: ctrlWrapper(followUser),
+  unfollowUser: ctrlWrapper(unfollowUser),
 };

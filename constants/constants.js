@@ -67,11 +67,11 @@ export const defaultTempFolderPathArr = ["temp"];
 export const imagesAllowedExtensions = ["jpg", "jpeg", "png"];
 
 export const avatarsFolderRelPath = ["avatars"]; // inside public folder
-export const avatarMaxFileSizeKB = 1024;
+export const avatarMaxFileSizeKB = 30 * 1024;
 export const defaultAvatarFileName = "avatar_default.jpg";
 
 export const recipesFolderRelPath = ["recipes"]; // inside public folder
-export const recipeMaxFileSizeKB = 1024;
+export const recipeMaxFileSizeKB = 30 * 1024;
 
 export const ingredientsFolderRelPath = ["ingredients"]; // inside public folder
-export const ingredientMaxFileSizeKB = 1024;
+export const ingredientMaxFileSizeKB = 30 * 1024;
