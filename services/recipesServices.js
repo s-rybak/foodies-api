@@ -31,7 +31,7 @@ export const listRecipes = async (
     { model: Ingredient, as: "ingredients", through: { attributes: [] } },
     { model: Category },
     { model: Area },
-    { model: User, attributes: ["id", "name"] },
+    { model: User, attributes: ["id", "name", "avatar"] },
   ];
 
   if (ownerId) {
@@ -114,7 +114,7 @@ export const getRecipeById = async id => {
       },
       { model: Category },
       { model: Area },
-      { model: User, attributes: ["id", "name"] },
+      { model: User, attributes: ["id", "name", "avatar"] },
     ],
   });
 };

@@ -14,7 +14,7 @@ async function getAllTestimonials(page, limit) {
             {
                 model: User,
                 as: 'user',
-                attributes: ['id', 'name']
+                attributes: ['id', 'name',"avatar"]
             }
         ],
         offset: (page - 1) * limit,
