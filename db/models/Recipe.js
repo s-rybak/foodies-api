@@ -30,7 +30,7 @@ const Recipe = sequelize.define("recipe", {
         allowNull: false
     },
     time: {
-        type: DataTypes.STRING,
+        type: DataTypes.INTEGER,
         allowNull: false
     },
     categoryId: {

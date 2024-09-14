@@ -40,7 +40,7 @@ export const createRecipeSchema = Joi.object({
     "string.empty": "Description is required",
     "any.required": "Description is required",
   }),
-  time: Joi.string().required().messages({
+  time: Joi.number().integer().required().messages({
     "string.empty": "Time is required",
     "any.required": "Time is required",
   }),
