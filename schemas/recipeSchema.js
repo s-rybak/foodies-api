@@ -12,17 +12,17 @@ export const routerUserRecipeSchema = Joi.object({
 export const queryRecipes = Joi.object({
   ownerId: Joi.string().uuid(),
   ingredient: Joi.alternatives(
-    Joi.string().uuid(),
-    Joi.array().items(Joi.string().uuid())
-  ),
+      Joi.string().uuid(),
+      Joi.array().items(Joi.string().uuid())
+  ).optional(),
   category: Joi.alternatives(
-    Joi.string().uuid(),
-    Joi.array().items(Joi.string().uuid())
-  ),
+      Joi.string().uuid(),
+      Joi.array().items(Joi.string().uuid())
+  ).optional(),
   area: Joi.alternatives(
-    Joi.string().uuid(),
-    Joi.array().items(Joi.string().uuid())
-  ),
+      Joi.string().uuid(),
+      Joi.array().items(Joi.string().uuid())
+  ).optional(),
   page: Joi.number().integer().min(1).default(1),
   limit: Joi.number().integer().min(1).max(100).default(10),
 });
@@ -53,14 +53,14 @@ export const createRecipeSchema = Joi.object({
     "any.required": "Area ID is required",
   }),
   ingredients: Joi.array()
-    .items(
-      Joi.object({
-        id: Joi.string().uuid().required(),
-        measure: Joi.string().required(),
-      })
-    )
-    .required()
-    .messages({
-      "any.required": "Ingredients is required",
-    }),
+      .items(
+          Joi.object({
+            id: Joi.string().uuid().required(),
+            measure: Joi.string().required(),
+          })
+      )
+      .required()
+      .messages({
+        "any.required": "Ingredients is required",
+      }),
 });
