@@ -19,9 +19,7 @@ async function createUser(data) {
         const verificationToken = uuidv4();
 
         const reply = await User.create({
-            ...data,
-            password: hashedPassword,
-            verificationToken,
+            ...data, password: hashedPassword, verificationToken,
         });
 
         return reply?.dataValues;
@@ -57,8 +55,7 @@ async function getUser(query) {
  */
 async function updateUser(id, data) {
     const [rows, [updateReply]] = await User.update(data, {
-        where: {id},
-        returning: true,
+        where: {id}, returning: true,
     });
 
     return rows ? updateReply?.dataValues : null;
@@ -71,24 +68,11 @@ async function getUserFollowers(userId, pagination = {}) {
 
     try {
         const followers = await Follow.findAll({
-            where: {followedId: userId},
-            include: [
-                {
-                    model: User,
-                    as: 'follower',
-                    attributes: ['id', 'name', 'avatar'],
-                    include: [
-                        {
-                            model: Recipe,
-                            as: 'recipes',
-                            attributes: ['id'],
-                        },
-                    ],
-                },
-            ],
-            attributes: [],
-            offset,
-            limit: normalizedLimit,
+            where: {followedId: userId}, include: [{
+                model: User, as: 'follower', attributes: ['id', 'name', 'avatar'], include: [{
+                    model: Recipe, as: 'recipes', attributes: ['id'],
+                },],
+            },], attributes: [], offset, limit: normalizedLimit,
         });
 
         const followersCount = await Follow.count({
@@ -103,10 +87,7 @@ async function getUserFollowers(userId, pagination = {}) {
         }));
 
         return {
-            followersCount,
-            users: result,
-            totalPages: Math.ceil(followersCount / normalizedLimit),
-            currentPage: page,
+            followersCount, users: result, totalPages: Math.ceil(followersCount / normalizedLimit), currentPage: page,
         };
     } catch (error) {
         throw new Error(error.message);
@@ -120,24 +101,11 @@ async function getUserFollowing(userId, pagination = {}) {
 
     try {
         const following = await Follow.findAll({
-            where: {'$follow.followerId$': userId},
-            include: [
-                {
-                    model: User,
-                    as: 'followed',
-                    attributes: ['id', 'name', 'avatar'],
-                    include: [
-                        {
-                            model: Recipe,
-                            as: 'recipes',
-                            attributes: ['id'],
-                        },
-                    ],
-                },
-            ],
-            attributes: ['followerId', 'followedId'],
-            offset,
-            limit: normalizedLimit,
+            where: {'$follow.followerId$': userId}, include: [{
+                model: User, as: 'followed', attributes: ['id', 'name', 'avatar'], include: [{
+                    model: Recipe, as: 'recipes', attributes: ['id'],
+                },],
+            },], attributes: ['followerId', 'followedId'], offset, limit: normalizedLimit,
         });
 
         const followingCount = await Follow.count({
@@ -152,10 +120,7 @@ async function getUserFollowing(userId, pagination = {}) {
         }));
 
         return {
-            followingCount,
-            users: result,
-            totalPages: Math.ceil(followingCount / normalizedLimit),
-            currentPage: page,
+            followingCount, users: result, totalPages: Math.ceil(followingCount / normalizedLimit), currentPage: page,
         };
     } catch (error) {
         throw new Error(error.message);
@@ -172,17 +137,21 @@ const getUserDetails = async (userId, authUserId) => {
         return null;
     }
 
-    const createRecipeCount = await Recipe.count({owner: userId});
+    const createRecipeCount = await Recipe.count({where: {ownerId: userId}});
     const followersUserCount = await Follow.count({
-        followerId: userId,
+        where: {followerId: userId}
     });
 
     if (userId === authUserId) {
         const countFavouriteRecipe = await UserFavorite.count({
-            ownerId: authUserId,
+            where: {
+                ownerId: authUserId,
+            }
         });
         const followingUsersCount = await Follow.count({
-            followingId: authUserId,
+            where: {
+                followedId: authUserId,
+            }
         });
 
         return {
@@ -197,12 +166,7 @@ const getUserDetails = async (userId, authUserId) => {
         };
     } else {
         return {
-            id: user.id,
-            avatar: user.avatar,
-            name: user.name,
-            email: user.email,
-            createRecipeCount,
-            followersUserCount,
+            id: user.id, avatar: user.avatar, name: user.name, email: user.email, createRecipeCount, followersUserCount,
         };
     }
 };
@@ -214,8 +178,7 @@ const getUserDetails = async (userId, authUserId) => {
  */
 const followUser = async (currentUserId, userId) => {
     return await Follow.create({
-        followerId: currentUserId,
-        followedId: userId,
+        followerId: currentUserId, followedId: userId,
     });
 };
 
@@ -227,19 +190,13 @@ const followUser = async (currentUserId, userId) => {
 const unfollowUser = async (currentUserId, userId) => {
     return await Follow.destroy({
         where: {
-            followerId: currentUserId,
-            followedId: userId,
+            followerId: currentUserId, followedId: userId,
         },
     });
 };
 
 export default {
-    createUser,
-    getUser,
-    updateUser,
-    followUser, // ветка follow-unfollow
+    createUser, getUser, updateUser, followUser, // ветка follow-unfollow
     unfollowUser, // ветка follow-unfollow
-    getUserDetails,
-    getUserFollowers,
-    getUserFollowing,
+    getUserDetails, getUserFollowers, getUserFollowing,
 };
