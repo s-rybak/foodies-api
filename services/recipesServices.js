@@ -92,7 +92,7 @@ export const getPopularRecipes = async ({ page = 1, limit = 20 }) => {
         { model: Area, attributes: ["id", "name"] },
         { model: User, attributes: ["id", "name","avatar"] },
       ],
-      group: ["recipe.id", "category.id", "area.id"],
+      group: ["recipe.id", "category.id", "area.id", "user.id"],
       order: [[sequelize.literal("favorite_count"), "DESC"]],
       limit: normalizedLimit,
       offset,
