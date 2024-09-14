@@ -39,7 +39,7 @@ app.use(
 
 app.use("/api/categories", categoriesRouter);
 app.use("/api/ingredients", ingredientsRouter);
-app.use("/api/users", followRouter); // ветка follow-unfollow
+app.use("/api/users", followRouter);
 app.use("/api/auth", authRouter);
 app.use("/api/users", usersRouter);
 app.use("/api/areas", areasRouter);
