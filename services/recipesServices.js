@@ -52,6 +52,7 @@ export const listRecipes = async (
 
   return {
     count: await Recipe.count({
+      distinct: true,
       include: includeOptions,
       where: query,
     }),
