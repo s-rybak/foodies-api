@@ -73,16 +73,12 @@ const getUserDetailsController = async (req, res) => {
 const getCurrentUser = async (req, res) => {
   try {
     const { id, name, email, avatar } = req.user;
-    const followersCount = await Follow.count({ followingId: id });
-    const followingCount = await Follow.count({ followerId: id });
 
     res.json({
       id,
       name,
       email,
       avatar,
-      followersCount,
-      followingCount,
     });
   } catch (error) {
     return res.status(500).json({ message: "Server Error" });
