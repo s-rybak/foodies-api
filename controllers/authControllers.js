@@ -33,7 +33,7 @@ const registerUser = async (req, res) => {
     to: email,
     subject: "Confirm Your Email Address",
     html: emailConfirmationHtml(
-      `${BASE_FRONT_URL}/api/auth/verify/${verificationToken}`,
+      `${BASE_FRONT_URL}/auth/verify/${verificationToken}`,
       false, // false is for the case when email is sent for the first time (varying text content)
       name
     ),
@@ -79,7 +79,7 @@ const resendEmailVerify = async (req, res, next) => {
     to: email,
     subject: "Resent: Confirm Your Email Address",
     html: emailConfirmationHtml(
-      `${BASE_FRONT_URL}/api/auth/verify/${user.verificationToken}`,
+      `${BASE_FRONT_URL}/auth/verify/${user.verificationToken}`,
       true, // true is for the case when email is sent not for the first time (varying text content)
       user.name
     ),
