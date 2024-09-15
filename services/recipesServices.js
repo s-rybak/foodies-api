@@ -10,7 +10,7 @@ import User from "../db/models/User.js";
 import sequelize from "../db/sequelize.js";
 import UserFavorite from "../db/models/UserFavorite.js";
 import RecipeIngredient from "../db/models/RecipeIngredient.js";
-import {removeFile} from "./fileServices.js";
+import {removeFile} from "./coudinaryService.js";
 
 /**
  *
@@ -220,9 +220,7 @@ export const removeRecipe = async id => {
     });
 
     if (result > 0 && recipe.thumb) {
-        // Remove recipe thumb image file
-        const thumbPath = path.resolve(defaultPublicFolderName, recipe.thumb);
-        removeFile(thumbPath);
+        removeFile(recipe.thumb);
     }
 
     return result;
