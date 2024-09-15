@@ -20,7 +20,7 @@ import claudinaryServices from "../services/coudinaryService.js";
 export const getById = ctrlWrapper(async (req, res, next) => {
     try {
         const {id} = req.params;
-        const {userId} = req.user;
+        const {id: userId} = req.user;
 
         if (!id) {
             throw HttpError(404, `Recipe with id=${id} not found`);
