@@ -14,7 +14,7 @@ import {
 } from "../services/recipesServices.js";
 import Recipe from "../db/models/Recipe.js";
 import UserFavorite from "../db/models/UserFavorite.js";
-import fileServices from "../services/fileServices.js";
+import claudinaryServices from "../services/coudinaryService.js";
 
 export const getById = ctrlWrapper(async (req, res, next) => {
     try {
@@ -41,7 +41,7 @@ export const createRecipe = ctrlWrapper(async (req, res) => {
     const thumbFile = req.file;
 
     // Move thumb image file from 'temp' to recipes folder and rename the file
-    const thumbPathStr = await fileServices.saveFileToServerFileSystem(
+    const thumbPathStr = await claudinaryServices.saveFileToServerFileSystem(
         thumbFile,
         recipesFolderRelPath,
         "thumb"

@@ -6,7 +6,7 @@ import ctrlWrapper from "../decorators/ctrlWrapper.js";
 import HttpError from "../helpers/HttpError.js";
 
 import usersServices from "../services/usersServices.js";
-import fileServices from "../services/fileServices.js";
+import claudinaryServices from "../services/coudinaryService.js";
 import Follow from "../db/models/Follow.js";
 
 /**
@@ -77,7 +77,7 @@ const getUserDetailsController = async (req, res) => {
  */
 const updateAvatar = async (req, res) => {
   // Move file from 'temp' to avatar folder and rename the file
-  const newAvatarRelPath = await fileServices.saveFileToServerFileSystem(
+  const newAvatarRelPath = await claudinaryServices.saveFileToServerFileSystem(
     req.file,
     avatarsFolderRelPath,
     "avatar",

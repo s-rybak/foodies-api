@@ -10,7 +10,7 @@ import User from "../db/models/User.js";
 import sequelize from "../db/sequelize.js";
 import UserFavorite from "../db/models/UserFavorite.js";
 import RecipeIngredient from "../db/models/RecipeIngredient.js";
-import {removeFile} from "./fileServices.js";
+import {removeFile} from "./coudinaryService.js";
 
 /**
  *
