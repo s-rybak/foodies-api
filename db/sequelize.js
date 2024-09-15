@@ -23,4 +23,13 @@ export const databaseConfig = {
 
 const sequelize = new Sequelize(databaseConfig);
 
+// sequelize
+//   .sync({ force: true })
+//   .then(() => {
+//     console.log("All tables synchronized successfully with force.");
+//   })
+//   .catch(error => {
+//     console.error("Error synchronizing tables with force:", error);
+//   });
+
 export default sequelize;

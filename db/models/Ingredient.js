@@ -1,5 +1,5 @@
-import { DataTypes } from 'sequelize';
-import sequelize from '../sequelize.js';
+import { DataTypes } from "sequelize";
+import sequelize from "../sequelize.js";
 import Recipe from "./Recipe.js";
 
 const Ingredient = sequelize.define(
@@ -9,7 +9,7 @@ const Ingredient = sequelize.define(
       type: DataTypes.UUID,
       defaultValue: DataTypes.UUIDV4,
       allowNull: false,
-      primaryKey: true
+      primaryKey: true,
     },
     name: {
       type: DataTypes.STRING,
@@ -28,6 +28,5 @@ const Ingredient = sequelize.define(
     timestamps: false,
   }
 );
-
 
 export default Ingredient;

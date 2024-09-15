@@ -8,7 +8,7 @@ const Category = sequelize.define(
       type: DataTypes.UUID,
       defaultValue: DataTypes.UUIDV4,
       allowNull: false,
-      primaryKey: true
+      primaryKey: true,
     },
     name: {
       type: DataTypes.STRING,
@@ -19,7 +19,5 @@ const Category = sequelize.define(
     timestamps: false,
   }
 );
-
-// Category.sync({ force: true });
 
 export default Category;
