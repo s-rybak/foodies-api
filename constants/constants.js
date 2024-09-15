@@ -64,7 +64,7 @@ export const defaultPublicFolderName = "public";
 export const defaultTempFolderPathArr = ["temp"];
 
 // Images settings
-export const imagesAllowedExtensions = ["jpg", "jpeg", "png"];
+export const imagesAllowedExtensions = ["jpg", "jpeg", "png","webp"];
 
 export const avatarsFolderRelPath = ["avatars"]; // inside public folder
 export const avatarMaxFileSizeKB = 30 * 1024;
