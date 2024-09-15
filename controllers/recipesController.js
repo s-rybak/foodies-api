@@ -20,19 +20,25 @@ import claudinaryServices from "../services/coudinaryService.js";
 export const getById = ctrlWrapper(async (req, res, next) => {
     try {
         const {id} = req.params;
-        const {id: userId} = req.user;
+        const {id: userId = null} = req.user ?? {};
 
         if (!id) {
             throw HttpError(404, `Recipe with id=${id} not found`);
         }
 
-        const recipe = await getRecipeById(id);
+        const recipe = (await getRecipeById(id)).dataValues;
 
         if (!recipe) {
             throw HttpError(404, `Recipe with id=${id} not found`);
         }
 
-        recipe.isFavirote = await isRecipeFavorite(userId, id);
+        recipe.isFavirote = false;
+
+        if (userId) {
+            recipe.isFavirote = await isRecipeFavorite(userId, id);
+        }
+
+        console.log(recipe)
 
         res.json(recipe);
     } catch (e) {
