@@ -30,6 +30,12 @@ authRouter.post(
   authControllers.loginUser
 );
 
+authRouter.get(
+  "/current",
+  authenticateMiddleware,
+  authControllers.getCurrentUser
+);
+
 authRouter.post("/logout", authenticateMiddleware, authControllers.logoutUser);
 
 export default authRouter;
