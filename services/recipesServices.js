@@ -105,6 +105,12 @@ export const getPopularRecipes = async ({page = 1, limit = 20}) => {
     }
 };
 
+export const isRecipeFavorite = async (userId, recipeId) => {
+    return !!(await UserFavorite.count({
+        where: {ownerId: userId, recipeId},
+    }));
+}
+
 export const getRecipeById = async id => {
     return Recipe.findOne({
         where: {id},

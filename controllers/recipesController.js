@@ -11,6 +11,7 @@ import {
     removeRecipe,
     getFavoriteRecipesByUserId,
     getPopularRecipes,
+    isRecipeFavorite,
 } from "../services/recipesServices.js";
 import Recipe from "../db/models/Recipe.js";
 import UserFavorite from "../db/models/UserFavorite.js";
@@ -19,6 +20,7 @@ import claudinaryServices from "../services/coudinaryService.js";
 export const getById = ctrlWrapper(async (req, res, next) => {
     try {
         const {id} = req.params;
+        const {userId} = req.user;
 
         if (!id) {
             throw HttpError(404, `Recipe with id=${id} not found`);
@@ -29,6 +31,8 @@ export const getById = ctrlWrapper(async (req, res, next) => {
         if (!recipe) {
             throw HttpError(404, `Recipe with id=${id} not found`);
         }
+
+        recipe.isFavirote = await isRecipeFavorite(userId, id);
 
         res.json(recipe);
     } catch (e) {
