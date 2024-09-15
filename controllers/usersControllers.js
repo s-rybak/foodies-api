@@ -64,28 +64,6 @@ const getUserDetailsController = async (req, res) => {
 };
 
 /**
- * Controller to get the currently authenticated user's information.
- * It retrieves and sends the current user's ID, name, email, avatar followers, and following.
- *
- * @param {Object} req Express request object.
- * @param {Object} res Express response object.
- */
-const getCurrentUser = async (req, res) => {
-  try {
-    const { id, name, email, avatar } = req.user;
-
-    res.json({
-      id,
-      name,
-      email,
-      avatar,
-    });
-  } catch (error) {
-    return res.status(500).json({ message: "Server Error" });
-  }
-};
-
-/**
  * Controller to update the user's avatar.
  * It moves the uploaded avatar file from a temporary folder to the avatars folder,
  * and removes the old avatar file if it is not the default avatar.
@@ -190,7 +168,6 @@ const unfollowUser = async (req, res, next) => {
 
 export default {
   //getUserInfo: ctrlWrapper(getUserInfo),
-  getCurrentUser: ctrlWrapper(getCurrentUser),
   updateAvatar: ctrlWrapper(updateAvatar),
   getFollowers: ctrlWrapper(getFollowers),
   getFollowing: ctrlWrapper(getFollowing),

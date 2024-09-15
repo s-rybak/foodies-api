@@ -183,6 +183,28 @@ const loginUser = async (req, res, next) => {
 };
 
 /**
+ * Controller to get the currently authenticated user's information.
+ * It retrieves and sends the selected current user's data.
+ *
+ * @param {Object} req Express request object.
+ * @param {Object} res Express response object.
+ */
+const getCurrentUser = async (req, res) => {
+  try {
+    const { id, name, email, avatar } = req.user;
+
+    res.json({
+      id,
+      name,
+      email,
+      avatar,
+    });
+  } catch (error) {
+    return res.status(500).json({ message: "Server Error" });
+  }
+};
+
+/**
  * Controller to handle user logout.
  *
  * It removes the user's token, effectively setting it to null.
@@ -201,5 +223,6 @@ export default {
   resendEmailVerify: ctrlWrapper(resendEmailVerify),
   verifyUserEmail: ctrlWrapper(verifyUserEmail),
   loginUser: ctrlWrapper(loginUser),
+  getCurrentUser: ctrlWrapper(getCurrentUser),
   logoutUser: ctrlWrapper(logoutUser),
 };
