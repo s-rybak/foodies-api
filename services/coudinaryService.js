@@ -63,9 +63,8 @@ export const saveFileToServerFileSystem = async (
  * @returns {boolean} true if the file is deleted, otherwise false.
  */
 export const removeFile = async path => {
-
-    await cloudinary.uploader.destroy(path);
-
+    const publicId = path.slice(path.lastIndexOf("/") + 1, path.lastIndexOf("."));
+    await cloudinary.uploader.destroy("store/" + publicId);
     return true;
 
 };

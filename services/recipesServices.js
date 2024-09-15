@@ -220,9 +220,7 @@ export const removeRecipe = async id => {
     });
 
     if (result > 0 && recipe.thumb) {
-        // Remove recipe thumb image file
-        const thumbPath = path.resolve(defaultPublicFolderName, recipe.thumb);
-        removeFile(thumbPath);
+        removeFile(recipe.thumb);
     }
 
     return result;
