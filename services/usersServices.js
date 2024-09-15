@@ -182,6 +182,12 @@ const followUser = async (currentUserId, userId) => {
     });
 };
 
+const isUserFollowing = async (currentUserId, userId) => {
+    return !!(await Follow.count({
+        where: {followerId: currentUserId, followedId: userId},
+    }));
+};
+
 /**
  * @param {string} currentUserId
  * @param {string} userId
@@ -196,6 +202,7 @@ const unfollowUser = async (currentUserId, userId) => {
 };
 
 export default {
+    isUserFollowing,
     createUser, getUser, updateUser, followUser, // ветка follow-unfollow
     unfollowUser, // ветка follow-unfollow
     getUserDetails, getUserFollowers, getUserFollowing,
