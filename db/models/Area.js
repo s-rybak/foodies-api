@@ -8,7 +8,7 @@ const Area = sequelize.define(
       type: DataTypes.UUID,
       defaultValue: DataTypes.UUIDV4,
       allowNull: false,
-      primaryKey: true
+      primaryKey: true,
     },
     name: {
       type: DataTypes.STRING,
@@ -19,7 +19,5 @@ const Area = sequelize.define(
     timestamps: false,
   }
 );
-
-// Area.sync({ force: true });
 
 export default Area;
