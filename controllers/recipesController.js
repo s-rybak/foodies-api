@@ -192,6 +192,7 @@ export const getPopularRecipesController = ctrlWrapper(
 export const getAllRecipes = ctrlWrapper(async (req, res, next) => {
     try {
         const {
+            ownerId = null,
             category = null,
             ingredient = null,
             area = null,
@@ -200,7 +201,7 @@ export const getAllRecipes = ctrlWrapper(async (req, res, next) => {
         } = req.query;
 
         const {count, rows} = await listRecipes(
-            {category, ingredient, area},
+            {category, ingredient, area, ownerId},
             {limit, offset: (page - 1) * limit}
         );
 
